@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
+import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -123,21 +124,9 @@ export function ArticleContent({
               animate="visible"
               variants={fadeInUp}
               transition={{ duration: 0.5, delay: 0.2 }}
+              className="prose prose-invert max-w-none prose-headings:font-display prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-xl bg-card border border-border/50 rounded-2xl p-8 md:p-12"
             >
-              <div className="bg-card border border-border/50 rounded-2xl p-8 md:p-12 min-h-[400px] flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                    <Clock className="w-8 h-8 text-primary" />
-                  </div>
-                  <h2 className="text-2xl font-display font-semibold mb-3">
-                    Coming Soon
-                  </h2>
-                  <p className="text-muted-foreground max-w-md">
-                    This article is currently being written. Check back soon for
-                    the full content. In the meantime, explore other insights.
-                  </p>
-                </div>
-              </div>
+              <ReactMarkdown>{article.content || 'Content is missing.'}</ReactMarkdown>
             </motion.div>
 
             {/* Sidebar */}
