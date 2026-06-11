@@ -7,9 +7,9 @@ export const siteConfig = {
   ogImage: "/og/default.png",
   links: {
     github: "https://github.com/shashi-bhushan-27",
-    linkedin: "https://linkedin.com/in/shashi-bhushan-vijay",
-    twitter: "https://twitter.com/shashibhushan",
-    instagram: "https://instagram.com/shashibhushan",
+    linkedin: "https://www.linkedin.com/in/shashi-bhushan-/",
+    twitter: "https://x.com/shashi_vijay_",
+    instagram: "https://www.instagram.com/shashi_bhushan_._/",
     email: "shashibhushanvijay@gmail.com",
   },
   phone: "+91 7060049677",
