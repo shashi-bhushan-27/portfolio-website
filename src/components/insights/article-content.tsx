@@ -16,6 +16,7 @@ type Article = {
   slug: string;
   title: string;
   excerpt: string;
+  content: string | null;
   category: string;
   readingTime: number;
   publishedAt: string;
