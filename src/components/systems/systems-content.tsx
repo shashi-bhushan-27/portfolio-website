@@ -234,6 +234,17 @@ export function SystemsContent({ architectures }: { architectures: SystemArchite
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
+  if (!architectures || architectures.length === 0) {
+    return (
+      <section className="section-padding">
+        <div className="container-custom text-center py-32">
+          <h1 className="text-4xl font-display font-bold mb-4">System Architectures</h1>
+          <p className="text-muted-foreground">Detailed system diagrams are currently being mapped out and will be published soon.</p>
+        </div>
+      </section>
+    );
+  }
+
   const arch = architectures[selectedIdx];
 
   const technologies = useMemo(() => {
