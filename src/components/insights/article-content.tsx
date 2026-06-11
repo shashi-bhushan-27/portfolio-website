@@ -45,6 +45,22 @@ export function ArticleContent({
     }
   );
 
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const shareTitle = article.title;
+
+  const shareOnTwitter = () => {
+    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`, '_blank');
+  };
+
+  const shareOnLinkedIn = () => {
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, '_blank');
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareUrl);
+    alert('Link copied to clipboard!');
+  };
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -168,13 +184,13 @@ export function ArticleContent({
                     Share
                   </h3>
                   <div className="flex gap-3">
-                    <button className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                    <button onClick={shareOnTwitter} className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors" aria-label="Share on Twitter">
                       <Twitter className="w-4 h-4" />
                     </button>
-                    <button className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                    <button onClick={shareOnLinkedIn} className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors" aria-label="Share on LinkedIn">
                       <Linkedin className="w-4 h-4" />
                     </button>
-                    <button className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                    <button onClick={copyToClipboard} className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors" aria-label="Copy Link">
                       <Link2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -187,13 +203,13 @@ export function ArticleContent({
           <div className="lg:hidden mt-8 flex items-center gap-4">
             <span className="text-sm text-muted-foreground">Share:</span>
             <div className="flex gap-3">
-              <button className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                <Share2 className="w-4 h-4" />
+              <button onClick={shareOnTwitter} className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors" aria-label="Share on Twitter">
+                <Twitter className="w-4 h-4" />
               </button>
-              <button className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+              <button onClick={shareOnLinkedIn} className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors" aria-label="Share on LinkedIn">
                 <Linkedin className="w-4 h-4" />
               </button>
-              <button className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+              <button onClick={copyToClipboard} className="p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors" aria-label="Copy Link">
                 <Link2 className="w-4 h-4" />
               </button>
             </div>
