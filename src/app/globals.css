@@ -1,0 +1,227 @@
+@import 'tailwindcss';
+
+
+/* ─── Theme Variables ─── */
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Outfit', system-ui, sans-serif;
+
+  --color-background: oklch(0.145 0 0);
+  --color-foreground: oklch(0.985 0 0);
+  --color-primary: oklch(0.7 0.15 45);
+  --color-primary-foreground: oklch(0.15 0 0);
+  --color-muted: oklch(0.25 0.005 285);
+  --color-muted-foreground: oklch(0.65 0 0);
+  --color-accent: oklch(0.21 0.006 285);
+  --color-accent-foreground: oklch(0.985 0 0);
+  --color-border: oklch(0.25 0.005 285);
+  --color-ring: oklch(0.7 0.15 45);
+  --color-card: oklch(0.17 0.005 285);
+  --color-card-foreground: oklch(0.985 0 0);
+
+  --color-surface: oklch(0.16 0.003 285);
+  --color-surface-hover: oklch(0.2 0.006 285);
+
+  /* Animation durations */
+  --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-fade-in: fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-in-right: slide-in-right 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-scale-in: scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ─── Keyframe Animations ─── */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ─── Global Base Styles ─── */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── Premium Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.3 0.005 285);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.4 0.005 285);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.3 0.005 285) transparent;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background-color: oklch(0.7 0.15 45 / 0.3);
+  color: oklch(0.985 0 0);
+}
+
+/* ─── Interactive Element Transitions ─── */
+a,
+button,
+input,
+textarea,
+select,
+[role='button'] {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Focus Styles ─── */
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Utility Classes ─── */
+
+/* Glass morphism effect */
+.glass {
+  background: oklch(0.17 0.005 285 / 0.6);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid oklch(0.3 0.005 285 / 0.4);
+}
+
+/* Gradient text — coral/amber accent */
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.16 40) 0%,
+    oklch(0.7 0.15 45) 40%,
+    oklch(0.72 0.14 55) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Section spacing */
+.section-padding {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Container */
+.container-custom {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ─── Light Theme Overrides ─── */
+html.light {
+  --color-background: oklch(0.985 0 0);
+  --color-foreground: oklch(0.145 0 0);
+  --color-primary: oklch(0.6 0.16 45);
+  --color-primary-foreground: oklch(0.985 0 0);
+  --color-muted: oklch(0.93 0.005 285);
+  --color-muted-foreground: oklch(0.4 0 0);
+  --color-accent: oklch(0.95 0.003 285);
+  --color-accent-foreground: oklch(0.145 0 0);
+  --color-border: oklch(0.88 0.005 285);
+  --color-ring: oklch(0.6 0.16 45);
+  --color-card: oklch(0.98 0.003 285);
+  --color-card-foreground: oklch(0.145 0 0);
+  --color-surface: oklch(0.96 0.003 285);
+  --color-surface-hover: oklch(0.92 0.005 285);
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: oklch(0.75 0.005 285);
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.65 0.005 285);
+}
+
+html.light * {
+  scrollbar-color: oklch(0.75 0.005 285) transparent;
+}
+
+html.light ::selection {
+  background-color: oklch(0.6 0.16 45 / 0.25);
+  color: oklch(0.145 0 0);
+}
+
+html.light .glass {
+  background: oklch(0.98 0.003 285 / 0.7);
+  border-color: oklch(0.88 0.005 285 / 0.5);
+}
+
+html.light .gradient-text {
+  background: linear-gradient(
+    135deg,
+    oklch(0.55 0.18 40) 0%,
+    oklch(0.6 0.16 45) 40%,
+    oklch(0.58 0.15 55) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
