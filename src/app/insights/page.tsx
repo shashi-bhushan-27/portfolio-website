@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { InsightsContent } from '@/components/insights/insights-content';
 import type { ArticleData } from '@/lib/types';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Insights — Shashi Bhushan Vijay',
   description:

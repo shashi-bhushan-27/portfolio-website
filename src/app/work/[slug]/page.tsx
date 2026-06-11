@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { CaseStudyContent } from "@/components/work/case-study-content";
 import type { ProjectData } from "@/lib/types";
 
+export const revalidate = 60;
+
 type Props = {
   params: Promise<{ slug: string }>;
 };

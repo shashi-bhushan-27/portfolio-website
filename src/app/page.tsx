@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { HomeContent } from "@/components/home/home-content";
 import type { ProjectData, MilestoneData } from "@/lib/types";
 
+export const revalidate = 60;
+
 export default async function Home() {
   const [featuredProjects, milestones] = await Promise.all([
     prisma.project.findMany({

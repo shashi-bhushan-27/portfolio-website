@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { WorkPageContent } from "@/components/work/work-page-content";
 import type { ProjectData } from "@/lib/types";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Work — Shashi Bhushan Vijay",
   description:
