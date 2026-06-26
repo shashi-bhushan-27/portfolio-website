@@ -2,8 +2,24 @@
 
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
-import { Play, ExternalLink, Youtube } from 'lucide-react';
+import { Play, ExternalLink } from 'lucide-react';
 import type { VideoData } from '@/lib/types';
+
+/* ─── Inline YouTube SVG logo (lucide-react doesn't ship this icon) ─── */
+function YoutubeIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+    </svg>
+  );
+}
+
 
 /* ─── Category colour mapping ─── */
 const categoryStyle: Record<string, { accent: string; pill: string; glow: string }> = {
@@ -112,7 +128,7 @@ function VideoCard({ video, index }: { video: VideoData; index: number }) {
 
             {/* YouTube logo watermark */}
             <div className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-md bg-black/50 px-2 py-1 backdrop-blur-sm">
-              <Youtube className="h-3 w-3 text-red-500" />
+              <YoutubeIcon className="h-3 w-3 text-red-500" />
               <span className="text-[10px] font-mono text-white/70">YouTube</span>
             </div>
           </>
@@ -189,7 +205,7 @@ export function VideosContent({ videos }: { videos: VideoData[] }) {
         >
           {/* Eyebrow */}
           <div className="mb-4 flex items-center gap-2">
-            <Youtube className="h-4 w-4 text-red-500" />
+            <YoutubeIcon className="h-4 w-4 text-red-500" />
             <span className="text-xs font-mono font-medium uppercase tracking-widest text-muted-foreground">
               Video Library
             </span>
@@ -264,7 +280,7 @@ export function VideosContent({ videos }: { videos: VideoData[] }) {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mt-20 flex flex-col items-center gap-4 rounded-2xl border border-border/50 bg-card/40 p-10 text-center backdrop-blur-sm"
         >
-          <Youtube className="h-8 w-8 text-red-500" />
+          <YoutubeIcon className="h-8 w-8 text-red-500" />
           <h2 className="font-display text-2xl font-semibold tracking-tight">
             More content on YouTube
           </h2>
@@ -278,7 +294,7 @@ export function VideosContent({ videos }: { videos: VideoData[] }) {
             rel="noopener noreferrer"
             className="mt-2 inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
           >
-            <Youtube className="h-4 w-4" />
+            <YoutubeIcon className="h-4 w-4" />
             Visit Channel
           </a>
         </motion.div>
