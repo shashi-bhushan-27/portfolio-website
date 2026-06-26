@@ -70,3 +70,15 @@ model SystemArchitecture {
   edges          Json     // Stores array of edge objects
   createdAt      DateTime @default(now())
 }
+
+model Video {
+  id          String   @id @default(cuid())
+  youtubeId   String   @unique  // 11-character YouTube video ID only
+  title       String
+  description String
+  category    String   // e.g. "Distributed Systems", "Systems Programming"
+  featured    Boolean  @default(false)
+  order       Int      @default(0) // Controls display order in gallery
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+}

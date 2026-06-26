@@ -73,3 +73,14 @@ export type SystemArchitectureData = {
   nodes: SystemArchitectureNode[];
   edges: SystemArchitectureEdge[];
 };
+
+export type VideoData = {
+  id: string;
+  youtubeId: string;
+  title: string;
+  description: string;
+  category: string;
+  featured: boolean;
+  order: number;
+  publishedAt: string; // ISO string — serialized from Date
+};
