@@ -28,9 +28,16 @@ A premium, high-performance software engineering portfolio for Shashi Bhushan Vi
 ```
 
 ## 5. Design System
-- **Typography**: `Inter` (Sans), `JetBrains Mono` (Code), `Outfit` (Display/Headings).
-- **Colors**: Deep dark mode background (`oklch(0.145 0 0)`) with coral/amber gradient accents. High-contrast foregrounds for readability.
-- **Effects**: Premium scrollbar, CSS-based glassmorphism (`.glass`), smooth interactive element transitions, and semantic container padding.
+- **Typography**: `Geist` (UI + headings) and `Geist Mono` (labels, metadata, code), via `next/font/google`.
+- **Colour**: one neutral ramp plus a single signal accent (lime) — tokens in `src/app/globals.css`
+  (`--bg`, `--surface`, `--fg`, `--fg-muted`, `--line`, `--signal`, `--signal-ink`…), exposed as Tailwind
+  colours (`bg-bg`, `text-fg-muted`, `border-line`, `bg-signal`…). Dark is the default; light is fully supported.
+- **Language**: hairline rules, numbered section headers (`[01] Selected work`), mono metadata, small radii,
+  index/table layouts instead of card grids. Avoid gradients, glassmorphism, emoji icons, and blanket fade-ins.
+- **3D**: the home hero is a react-three-fiber scene of the indoor-positioning system
+  (`src/components/three/`), loaded client-side only; `/systems` has a CSS-3D "exploded" diagram view.
+- **Shared UI**: `src/components/ui/` (buttons, section/page headers, copy button, clock), ⌘K command
+  palette in `src/components/layout/command-palette.tsx`.
 
 ## 6. Completed Integrations (Phase 5)
 - **Cloudinary**: Assets are served via a global CDN.
@@ -41,7 +48,7 @@ A premium, high-performance software engineering portfolio for Shashi Bhushan Vi
 ## 7. Remaining Tasks / Next Steps
 - **Custom Domain Integration**: Purchasing a domain, mapping it to Vercel, and verifying it in Resend.
 - **Google Search Console**: Submitting the sitemap for indexing.
-- **Content Expansion**: Adding new case studies or insights via Prisma Studio.
+- **Content Expansion**: Articles are written at `/admin` (see `blog-system-context.md`); case studies and other models via Prisma Studio.
 
 ## 8. Technical Debt
 - **Image Optimization**: Currently relying on standard Next.js `<Image>`. As the portfolio grows, integrating `next-cloudinary` could yield better auto-cropping and format selection.
@@ -49,6 +56,6 @@ A premium, high-performance software engineering portfolio for Shashi Bhushan Vi
 
 ## 9. Next Maintainer Instructions
 - Run `npm run dev` for local development.
-- Run `npx prisma studio` to manage the database content visually.
+- Write and publish articles at `/admin`. Run `npx prisma studio` for projects, milestones, systems and videos.
 - Do NOT rewrite the styling to standard CSS or CSS modules; strictly adhere to Tailwind v4.
 - Preserve the existing `.env` structure. Ensure the Neon pooled connection string is used in production.

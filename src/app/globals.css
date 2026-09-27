@@ -1,228 +1,490 @@
 @import 'tailwindcss';
-@plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:where(.dark, .dark *));
 
-/* ─── Theme Variables ─── */
-@theme {
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-display: 'Outfit', system-ui, sans-serif;
-
-  --color-background: oklch(0.145 0 0);
-  --color-foreground: oklch(0.985 0 0);
-  --color-primary: oklch(0.7 0.15 45);
-  --color-primary-foreground: oklch(0.15 0 0);
-  --color-muted: oklch(0.25 0.005 285);
-  --color-muted-foreground: oklch(0.65 0 0);
-  --color-accent: oklch(0.21 0.006 285);
-  --color-accent-foreground: oklch(0.985 0 0);
-  --color-border: oklch(0.25 0.005 285);
-  --color-ring: oklch(0.7 0.15 45);
-  --color-card: oklch(0.17 0.005 285);
-  --color-card-foreground: oklch(0.985 0 0);
-
-  --color-surface: oklch(0.16 0.003 285);
-  --color-surface-hover: oklch(0.2 0.006 285);
-
-  /* Animation durations */
-  --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-fade-in: fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-slide-in-right: slide-in-right 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-scale-in: scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* ─────────────────────────────────────────────────────────────
+   Tokens
+   One neutral ramp + one signal colour. The signal (lime) is the
+   only accent on the site; everything else is ink on paper.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --bg: oklch(0.977 0.004 90);
+  --surface: oklch(0.955 0.004 90);
+  --surface-2: oklch(0.925 0.005 90);
+  --fg: oklch(0.2 0.012 255);
+  --fg-muted: oklch(0.44 0.012 255);
+  --fg-faint: oklch(0.6 0.01 255);
+  --border: oklch(0.86 0.006 90);
+  --line: oklch(0.2 0.012 255 / 0.1);
+  --signal: oklch(0.89 0.2 124);
+  --on-signal: oklch(0.2 0.04 130);
+  --signal-ink: oklch(0.5 0.15 132);
+  --danger: oklch(0.55 0.2 25);
+  --warn: oklch(0.62 0.15 70);
+  --grid: oklch(0.2 0.012 255 / 0.05);
+  color-scheme: light;
 }
 
-/* ─── Keyframe Animations ─── */
-@keyframes fade-in-up {
-  from {
+.dark {
+  --bg: oklch(0.155 0.006 255);
+  --surface: oklch(0.185 0.006 255);
+  --surface-2: oklch(0.225 0.007 255);
+  --fg: oklch(0.965 0.004 255);
+  --fg-muted: oklch(0.72 0.01 255);
+  --fg-faint: oklch(0.54 0.01 255);
+  --border: oklch(0.29 0.008 255);
+  --line: oklch(0.965 0.004 255 / 0.085);
+  --signal: oklch(0.9 0.19 124);
+  --on-signal: oklch(0.2 0.04 130);
+  --signal-ink: oklch(0.9 0.19 124);
+  --danger: oklch(0.7 0.18 25);
+  --warn: oklch(0.82 0.14 75);
+  --grid: oklch(0.965 0.004 255 / 0.04);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SFMono-Regular', monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-faint: var(--fg-faint);
+  --color-border: var(--border);
+  --color-line: var(--line);
+  --color-signal: var(--signal);
+  --color-on-signal: var(--on-signal);
+  --color-signal-ink: var(--signal-ink);
+  --color-danger: var(--danger);
+  --color-warn: var(--warn);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Base ─── */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01', 'cv11';
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--signal);
+  color: var(--on-signal);
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal-ink);
+  outline-offset: 2px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Utilities ─── */
+@utility container-page {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
+}
+
+/* Engineering-paper grid used behind the hero and a few frames. */
+@utility bg-blueprint {
+  background-image:
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Small uppercase mono label: section indices, metadata, table heads. */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@utility link-underline {
+  text-decoration-line: underline;
+  text-decoration-color: var(--border);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color 0.2s;
+  &:hover {
+    text-decoration-color: var(--signal-ink);
+  }
+}
+
+/* Registration marks at the corners of a framed element. */
+.crosshairs {
+  position: relative;
+}
+.crosshairs::before,
+.crosshairs::after {
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--fg-faint), var(--fg-faint)) center / 1px 100% no-repeat,
+    linear-gradient(var(--fg-faint), var(--fg-faint)) center / 100% 1px no-repeat;
+}
+.crosshairs::before {
+  top: -5px;
+  left: -5px;
+}
+.crosshairs::after {
+  bottom: -5px;
+  right: -5px;
+}
+
+/* ─── Keyframes ─── */
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+@keyframes blink {
+  50% {
     opacity: 0;
-    transform: translateY(24px);
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(105%);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
-@keyframes fade-in {
+@keyframes fade {
   from {
     opacity: 0;
   }
-  to {
-    opacity: 1;
-  }
 }
 
-@keyframes slide-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+/* Line-by-line headline reveal; each .rise-line sets --i for its stagger. */
+.rise-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+.rise-line > span {
+  display: block;
+  animation: rise 0.9s var(--ease-out-expo) both;
+  animation-delay: calc(var(--i, 0) * 90ms + 120ms);
+}
+.fade-in {
+  animation: fade 0.8s ease-out both;
+  animation-delay: var(--d, 0ms);
 }
 
-@keyframes scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+/* ─────────────────────────────────────────────────────────────
+   Article body (.md) — used by the public article page and the
+   admin editor preview so both render identically.
+   ───────────────────────────────────────────────────────────── */
+.md {
+  --md-gap: 1.25em;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--fg-muted);
+  overflow-wrap: break-word;
 }
 
-/* ─── Global Base Styles ─── */
-html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.md > * + * {
+  margin-top: var(--md-gap);
 }
 
-body {
-  font-family: var(--font-sans);
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-  min-height: 100vh;
-  overflow-x: hidden;
+.md :where(strong) {
+  color: var(--fg);
+  font-weight: 600;
 }
 
-/* ─── Premium Scrollbar ─── */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.md :where(a) {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--signal-ink);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+.md :where(a:hover) {
+  background: color-mix(in oklch, var(--signal) 22%, transparent);
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+.md :where(h2, h3, h4) {
+  color: var(--fg);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  scroll-margin-top: 6rem;
+  position: relative;
+}
+.md :where(h2) {
+  font-size: 1.625rem;
+  margin-top: 2.75em;
+  padding-top: 1.25em;
+  border-top: 1px solid var(--line);
+}
+.md :where(h3) {
+  font-size: 1.25rem;
+  margin-top: 2em;
+}
+.md :where(h4) {
+  font-size: 1.0625rem;
+  margin-top: 1.75em;
+}
+.md :where(h2, h3, h4) + * {
+  margin-top: 0.75em;
+}
+.md > :first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }
 
-::-webkit-scrollbar-thumb {
-  background: oklch(0.3 0.005 285);
-  border-radius: 999px;
+.md .heading-anchor {
+  position: absolute;
+  left: -1.25em;
+  width: 1em;
+  color: var(--fg-faint);
+  text-decoration: none;
+  opacity: 0;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  transition: opacity 0.15s;
+}
+.md :where(h2, h3, h4):hover .heading-anchor,
+.md .heading-anchor:focus-visible {
+  opacity: 1;
+}
+.md .heading-anchor:hover {
+  background: none;
+  color: var(--signal-ink);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.4 0.005 285);
+.md :where(ul, ol) {
+  padding-left: 1.25em;
+}
+.md :where(ul) {
+  list-style: none;
+}
+.md :where(ul > li) {
+  position: relative;
+}
+.md :where(ul > li)::before {
+  content: '';
+  position: absolute;
+  left: -1em;
+  top: 0.8em;
+  width: 0.4em;
+  height: 1px;
+  background: var(--fg-faint);
+}
+.md :where(ol) {
+  list-style: decimal-leading-zero;
+}
+.md :where(ol > li)::marker {
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  color: var(--fg-faint);
+}
+.md :where(li + li) {
+  margin-top: 0.4em;
+}
+.md :where(li > ul, li > ol) {
+  margin-top: 0.4em;
+}
+.md :where(li input[type='checkbox']) {
+  margin-right: 0.5em;
+  accent-color: var(--signal-ink);
+}
+.md :where(ul.contains-task-list > li)::before {
+  display: none;
 }
 
-/* Firefox scrollbar */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: oklch(0.3 0.005 285) transparent;
+.md :where(blockquote) {
+  border-left: 2px solid var(--signal-ink);
+  padding: 0.1em 0 0.1em 1.25em;
+  color: var(--fg);
+  font-size: 1.125rem;
 }
 
-/* ─── Selection ─── */
-::selection {
-  background-color: oklch(0.7 0.15 45 / 0.3);
-  color: oklch(0.985 0 0);
+.md :where(hr) {
+  border: 0;
+  height: 1px;
+  background: var(--line);
+  margin-block: 2.5em;
+}
+/* An hr immediately before an h2 is redundant with the h2 rule. */
+.md :where(hr + h2) {
+  margin-top: 0;
+  border-top: 0;
 }
 
-/* ─── Interactive Element Transitions ─── */
-a,
-button,
-input,
-textarea,
-select,
-[role='button'] {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* ─── Focus Styles ─── */
-:focus-visible {
-  outline: 2px solid var(--color-ring);
-  outline-offset: 2px;
+.md :where(img) {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
   border-radius: 4px;
 }
 
-/* ─── Utility Classes ─── */
-
-/* Glass morphism effect */
-.glass {
-  background: oklch(0.17 0.005 285 / 0.6);
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  border: 1px solid oklch(0.3 0.005 285 / 0.4);
+.md :where(:not(pre) > code) {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--fg);
+  background: var(--surface-2);
+  border-radius: 3px;
+  padding: 0.12em 0.35em;
 }
 
-/* Gradient text — coral/amber accent */
-.gradient-text {
-  background: linear-gradient(
-    135deg,
-    oklch(0.75 0.16 40) 0%,
-    oklch(0.7 0.15 45) 40%,
-    oklch(0.72 0.14 55) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+.md :where(pre) {
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  padding: 1.1rem 1.25rem;
+  color: var(--fg);
+  background: var(--surface);
+  tab-size: 2;
 }
 
-/* Section spacing */
-.section-padding {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+.md .table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.md :where(table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+.md :where(th) {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--fg-faint);
+  text-align: left;
+  background: var(--surface);
+}
+.md :where(th, td) {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.md :where(tr:last-child td) {
+  border-bottom: 0;
+}
+.md :where(td) {
+  color: var(--fg-muted);
+}
+.md :where(td strong) {
+  color: var(--signal-ink);
 }
 
-/* Container */
-.container-custom {
-  max-width: 80rem;
-  margin-left: auto;
-  margin-right: auto;
+/* ─── Syntax highlighting (highlight.js classes) ─── */
+.hljs-comment,
+.hljs-quote {
+  color: var(--fg-faint);
+  font-style: italic;
 }
-
-/* ─── Light Theme Overrides ─── */
-html.light {
-  --color-background: oklch(0.985 0 0);
-  --color-foreground: oklch(0.145 0 0);
-  --color-primary: oklch(0.6 0.16 45);
-  --color-primary-foreground: oklch(0.985 0 0);
-  --color-muted: oklch(0.93 0.005 285);
-  --color-muted-foreground: oklch(0.4 0 0);
-  --color-accent: oklch(0.95 0.003 285);
-  --color-accent-foreground: oklch(0.145 0 0);
-  --color-border: oklch(0.88 0.005 285);
-  --color-ring: oklch(0.6 0.16 45);
-  --color-card: oklch(0.98 0.003 285);
-  --color-card-foreground: oklch(0.145 0 0);
-  --color-surface: oklch(0.96 0.003 285);
-  --color-surface-hover: oklch(0.92 0.005 285);
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-meta .hljs-keyword {
+  color: oklch(0.72 0.12 300);
 }
-
-html.light ::-webkit-scrollbar-thumb {
-  background: oklch(0.75 0.005 285);
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: var(--signal-ink);
 }
-
-html.light ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.65 0.005 285);
+.hljs-number,
+.hljs-literal,
+.hljs-symbol,
+.hljs-bullet {
+  color: oklch(0.78 0.13 60);
 }
-
-html.light * {
-  scrollbar-color: oklch(0.75 0.005 285) transparent;
+.hljs-title,
+.hljs-title.function_,
+.hljs-section {
+  color: oklch(0.8 0.1 230);
 }
-
-html.light ::selection {
-  background-color: oklch(0.6 0.16 45 / 0.25);
-  color: oklch(0.145 0 0);
+.hljs-type,
+.hljs-title.class_,
+.hljs-class .hljs-title {
+  color: oklch(0.8 0.12 180);
 }
-
-html.light .glass {
-  background: oklch(0.98 0.003 285 / 0.7);
-  border-color: oklch(0.88 0.005 285 / 0.5);
+.hljs-variable,
+.hljs-template-variable,
+.hljs-params,
+.hljs-attr,
+.hljs-property {
+  color: var(--fg);
 }
-
-html.light .gradient-text {
-  background: linear-gradient(
-    135deg,
-    oklch(0.55 0.18 40) 0%,
-    oklch(0.6 0.16 45) 40%,
-    oklch(0.58 0.15 55) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+.hljs-deletion {
+  color: var(--danger);
+}
+.hljs-meta {
+  color: var(--fg-muted);
+}
+:root:not(.dark) .hljs-keyword,
+:root:not(.dark) .hljs-selector-tag,
+:root:not(.dark) .hljs-built_in {
+  color: oklch(0.48 0.17 300);
+}
+:root:not(.dark) .hljs-number,
+:root:not(.dark) .hljs-literal {
+  color: oklch(0.55 0.15 50);
+}
+:root:not(.dark) .hljs-title,
+:root:not(.dark) .hljs-title.function_,
+:root:not(.dark) .hljs-section {
+  color: oklch(0.48 0.14 250);
+}
+:root:not(.dark) .hljs-type,
+:root:not(.dark) .hljs-title.class_ {
+  color: oklch(0.5 0.12 190);
 }
