@@ -37,9 +37,7 @@ export default async function AdminDashboard() {
 
   return (
     <>
-      <AdminHeader>
-        <span className="text-[13px] text-fg-muted">Articles</span>
-      </AdminHeader>
+      <AdminHeader current="articles" />
 
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">

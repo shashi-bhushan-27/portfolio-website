@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default async function VideosPage() {
   const rawVideos = await prisma.video.findMany({
-    orderBy: { order: 'asc' },
+    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
   });
 
   // Serialize Date → ISO string for safe Client Component hydration

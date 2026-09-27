@@ -5,7 +5,8 @@
  * Run with: npx tsx prisma/seed-videos.ts
  *
  * Safe to re-run — uses upsert so no duplicates are created.
- * After seeding, manage content via: npx prisma studio
+ * After seeding, manage videos in the admin at /admin/videos.
+ * Only one video should be featured: it takes the big player on /videos.
  */
 
 import { PrismaClient } from '@prisma/client';
