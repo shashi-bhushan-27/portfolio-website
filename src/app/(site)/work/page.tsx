@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
+import { getPublishedProjects } from "@/lib/projects";
 import { WorkPageContent } from "@/components/work/work-page-content";
 import { PageHeader } from "@/components/ui/section-header";
-import type { ProjectData } from "@/lib/types";
 
 export const revalidate = 60;
 
@@ -16,14 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function WorkPage() {
-  const projects = await prisma.project.findMany({
-    orderBy: { createdAt: "desc" },
-  });
-
-  const serialized: ProjectData[] = projects.map((p) => ({
-    ...p,
-    metrics: p.metrics as Record<string, string> | null,
-  }));
+  const projects = await getPublishedProjects();
 
   return (
     <>
@@ -33,7 +25,7 @@ export default async function WorkPage() {
         description="Case studies from patent-backed ML systems and AI platforms to quantitative finance and blockchain applications."
         meta={`${projects.length} case studies`}
       />
-      <WorkPageContent projects={serialized} />
+      <WorkPageContent projects={projects} />
     </>
   );
 }

@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+}
+
 model Project {
   id                   String   @id @default(cuid())
   slug                 String   @unique
@@ -14,14 +19,17 @@ model Project {
   excerpt              String
   domain               String
   technologies         String[]
-  featured             Boolean  @default(false)
+  featured             Boolean  @default(false) // shown under "Selected work" on the home page
   year                 String
   metrics              Json?    // Stores key-value pairs
   githubUrl            String?
   liveUrl              String?
-  coverGradient        String
-  icon                 String
-  
+  coverGradient        String   // legacy: no longer displayed
+  icon                 String   // legacy: no longer displayed
+  // Defaults keep rows that predate the admin live and in their original order.
+  status               ProjectStatus @default(PUBLISHED)
+  order                Int      @default(0) // lower first; ties fall back to newest first
+
   // Editorial Content
   executiveSummary     String
   problemStatement     String

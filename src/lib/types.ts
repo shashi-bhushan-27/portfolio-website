@@ -28,7 +28,18 @@ export type ProjectData = {
   performanceMetrics: string;
   lessonsLearned: string;
   futureImprovements: string;
+  status: PublishStatus;
+  order: number;
+  updatedAt: string; // ISO string
 };
+
+export type PublishStatus = 'DRAFT' | 'PUBLISHED';
+
+/** A project row as the admin Work list needs it. */
+export type AdminProject = Pick<
+  ProjectData,
+  'id' | 'slug' | 'title' | 'domain' | 'year' | 'featured' | 'status' | 'order' | 'updatedAt'
+>;
 
 export type MilestoneData = {
   id: string;

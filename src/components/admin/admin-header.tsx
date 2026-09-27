@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 
 const sections = [
   { key: 'articles', label: 'Articles', href: '/admin', live: '/insights' },
+  { key: 'work', label: 'Work', href: '/admin/work', live: '/work' },
   { key: 'videos', label: 'Videos', href: '/admin/videos', live: '/videos' },
 ] as const;
 
