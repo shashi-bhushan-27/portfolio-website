@@ -46,19 +46,28 @@ model Milestone {
   createdAt   DateTime @default(now())
 }
 
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+}
+
 model Article {
-  id          String   @id @default(cuid())
-  slug        String   @unique
+  id          String        @id @default(cuid())
+  slug        String        @unique
   title       String
   excerpt     String
-  content     String?  // The actual markdown content
+  content     String?       // The actual markdown content
   category    String
   readingTime Int
   publishedAt DateTime
   tags        String[]
-  featured    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  featured    Boolean       @default(false)
+  // Defaults to PUBLISHED so rows that predate the admin editor stay live.
+  // The editor always sets this explicitly (new articles start as DRAFT).
+  status      ArticleStatus @default(PUBLISHED)
+  coverImage  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
 model SystemArchitecture {

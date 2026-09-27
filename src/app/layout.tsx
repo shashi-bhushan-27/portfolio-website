@@ -1,34 +1,28 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono, Outfit } from 'next/font/google';
+import { Geist, Geist_Mono } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Analytics } from '@vercel/analytics/next';
 import { Providers } from '@/components/providers';
-import { Navbar } from '@/components/layout/navbar';
-import { Footer } from '@/components/layout/footer';
-import { AiAssistant } from '@/components/chat/ai-assistant';
 import { siteConfig } from '@/lib/constants';
 import './globals.css';
 
-const inter = Inter({
+const geist = Geist({
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--font-geist',
   display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const geistMono = Geist_Mono({
   subsets: ['latin'],
-  variable: '--font-mono',
-  display: 'swap',
-});
-
-const outfit = Outfit({
-  subsets: ['latin'],
-  variable: '--font-display',
+  variable: '--font-geist-mono',
   display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: siteConfig.title,
+  title: {
+    default: siteConfig.title,
+    template: `%s — ${siteConfig.name}`,
+  },
   description: siteConfig.description,
   metadataBase: new URL(siteConfig.url),
   keywords: [
@@ -43,6 +37,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: siteConfig.name, url: siteConfig.url }],
   creator: siteConfig.name,
+  alternates: {
+    types: { 'application/rss+xml': `${siteConfig.url}/feed.xml` },
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -64,7 +61,7 @@ export const metadata: Metadata = {
     title: siteConfig.title,
     description: siteConfig.description,
     images: [siteConfig.ogImage],
-    creator: '@shashibhushan',
+    creator: '@shashi_vijay_',
   },
   robots: {
     index: true,
@@ -81,8 +78,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fafafa' },
-    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+    { media: '(prefers-color-scheme: light)', color: '#f7f6f2' },
+    { media: '(prefers-color-scheme: dark)', color: '#0d0f12' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -96,16 +93,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} ${outfit.variable} h-full`}
+      className={`${geist.variable} ${geistMono.variable} h-full`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col antialiased" suppressHydrationWarning>
-        <Providers>
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-          <AiAssistant />
-        </Providers>
+      <body className="min-h-full antialiased" suppressHydrationWarning>
+        <Providers>{children}</Providers>
         {process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID} />
         )}

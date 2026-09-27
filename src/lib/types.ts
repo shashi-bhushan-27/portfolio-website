@@ -37,6 +37,8 @@ export type MilestoneData = {
   description: string;
 };
 
+export type ArticleStatus = 'DRAFT' | 'PUBLISHED';
+
 export type ArticleData = {
   id: string;
   slug: string;
@@ -46,8 +48,20 @@ export type ArticleData = {
   category: string;
   readingTime: number;
   publishedAt: string; // ISO string — serialized from Date
+  updatedAt: string; // ISO string
   tags: string[];
   featured: boolean;
+  status: ArticleStatus;
+  coverImage: string | null;
+};
+
+/** Listing-sized article (no markdown body). */
+export type ArticleSummary = Omit<ArticleData, 'content'>;
+
+export type TocItem = {
+  id: string;
+  text: string;
+  depth: 2 | 3;
 };
 
 export type SystemArchitectureNode = {

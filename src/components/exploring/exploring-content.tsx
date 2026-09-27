@@ -1,140 +1,74 @@
-'use client';
+import { topics, type TopicStatus } from '@/lib/content';
+import { cn } from '@/lib/utils';
 
-import { motion, useInView } from 'motion/react';
-import { useRef } from 'react';
-
-/* ─── Data ─── */
-type Status = 'Active' | 'Exploring' | 'Paused';
-
-interface Topic {
-  title: string;
-  status: Status;
-  description: string;
-}
-
-const topics: Topic[] = [
-  {
-    title: 'Advanced System Design',
-    status: 'Active',
-    description:
-      'Studying distributed system patterns, consensus algorithms, and scalable architectures.',
-  },
-  {
-    title: 'AI Agents & Autonomous Systems',
-    status: 'Active',
-    description:
-      'Exploring multi-agent architectures, tool-use patterns, and autonomous reasoning systems.',
-  },
-  {
-    title: 'LLM Applications & RAG',
-    status: 'Active',
-    description:
-      'Building production RAG pipelines, fine-tuning strategies, and prompt engineering.',
-  },
-  {
-    title: 'ML Deployment & MLOps',
-    status: 'Active',
-    description:
-      'Model serving, monitoring, A/B testing, and continuous training pipelines.',
-  },
-  {
-    title: 'Cloud Infrastructure',
-    status: 'Exploring',
-    description:
-      'AWS services, serverless architectures, and infrastructure as code.',
-  },
-  {
-    title: 'High-Performance Systems',
-    status: 'Exploring',
-    description:
-      'Low-latency systems, caching strategies, and performance optimization.',
-  },
-  {
-    title: 'Quantitative Finance',
-    status: 'Paused',
-    description:
-      'Options pricing models, algorithmic trading, and risk management systems.',
-  },
-  {
-    title: 'Blockchain & Web3',
-    status: 'Paused',
-    description:
-      'Smart contract patterns, DeFi protocols, and decentralized architectures.',
-  },
-];
-
-const statusColor: Record<Status, { dot: string; text: string }> = {
-  Active: { dot: 'bg-emerald-500', text: 'text-emerald-400' },
-  Exploring: { dot: 'bg-blue-500', text: 'text-blue-400' },
-  Paused: { dot: 'bg-amber-500', text: 'text-amber-400' },
+const state: Record<TopicStatus, { dot: string; text: string; label: string }> = {
+  Active: { dot: 'bg-signal', text: 'text-signal-ink', label: 'running' },
+  Exploring: { dot: 'bg-fg-muted', text: 'text-fg', label: 'sleeping' },
+  Paused: { dot: 'border border-fg-faint', text: 'text-fg-faint', label: 'stopped' },
 };
 
-/* ─── Component ─── */
 export function ExploringContent() {
-  const headerRef = useRef<HTMLDivElement>(null);
-  const headerInView = useInView(headerRef, { once: true, margin: '-60px' });
+  const counts = topics.reduce<Record<string, number>>((acc, t) => {
+    acc[t.status] = (acc[t.status] ?? 0) + 1;
+    return acc;
+  }, {});
 
   return (
-    <div className="section-padding">
-      <div className="container-custom max-w-4xl">
-        {/* ── Hero ── */}
-        <motion.div
-          ref={headerRef}
-          initial={{ opacity: 0, y: 32 }}
-          animate={
-            headerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }
-          }
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h1 className="font-display text-5xl font-bold tracking-tight">
-            What I&apos;m Exploring
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-            A public engineering journal of topics I&apos;m actively researching
-            and experimenting with.
-          </p>
-        </motion.div>
-
-        {/* ── Grid ── */}
-        <div className="mt-14 grid gap-5 sm:grid-cols-2">
-          {topics.map((topic, i) => {
-            const color = statusColor[topic.status];
-            return (
-              <motion.article
-                key={topic.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{
-                  duration: 0.5,
-                  ease: [0.16, 1, 0.3, 1],
-                  delay: i * 0.06,
-                }}
-                className="group rounded-xl border border-border/50 bg-card p-6 transition-colors hover:border-border"
-              >
-                {/* Status badge */}
-                <div className="mb-3 flex items-center gap-2">
-                  <span
-                    className={`inline-block size-2 rounded-full ${color.dot}`}
-                  />
-                  <span
-                    className={`text-xs font-medium uppercase tracking-wider ${color.text}`}
-                  >
-                    {topic.status}
-                  </span>
-                </div>
-
-                <h3 className="text-lg font-semibold tracking-tight">
-                  {topic.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {topic.description}
-                </p>
-              </motion.article>
-            );
-          })}
+    <div className="container-page">
+      <div className="border border-line">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-line bg-surface/50 px-4 py-2.5 font-mono text-[12px] text-fg-muted">
+          <span className="text-fg">$ ps --research</span>
+          <span className="ml-auto flex flex-wrap gap-x-5">
+            {(Object.keys(state) as TopicStatus[]).map((s) => (
+              <span key={s} className="flex items-center gap-2">
+                <span className={cn('size-1.5', state[s].dot)} />
+                {counts[s] ?? 0} {s.toLowerCase()}
+              </span>
+            ))}
+          </span>
         </div>
+
+        <table className="w-full text-left">
+          <thead className="hidden md:table-header-group">
+            <tr className="border-b border-line">
+              <th className="label-mono w-16 px-4 py-2.5 font-normal text-fg-faint">Pid</th>
+              <th className="label-mono w-32 py-2.5 font-normal text-fg-faint">State</th>
+              <th className="label-mono w-[30%] py-2.5 font-normal text-fg-faint">Topic</th>
+              <th className="label-mono py-2.5 pr-4 font-normal text-fg-faint">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topics.map((t, i) => {
+              const s = state[t.status];
+              return (
+                <tr
+                  key={t.title}
+                  className="grid grid-cols-[auto_1fr] gap-x-4 border-b border-line px-4 py-4 last:border-b-0 hover:bg-surface/60 md:table-row md:p-0"
+                >
+                  <td className="font-mono text-[12px] text-fg-faint md:px-4 md:py-4 md:align-top">
+                    {String(1000 + i * 7)}
+                  </td>
+                  <td className="md:py-4 md:align-top">
+                    <span className={cn('inline-flex items-center gap-2 font-mono text-[12px]', s.text)}>
+                      <span className={cn('size-1.5', s.dot)} />
+                      {s.label}
+                    </span>
+                  </td>
+                  <td className="col-span-2 mt-2 text-[15px] font-medium text-fg md:mt-0 md:py-4 md:pr-6 md:align-top">
+                    {t.title}
+                  </td>
+                  <td className="col-span-2 mt-1 text-sm leading-relaxed text-fg-muted md:mt-0 md:py-4 md:pr-4 md:align-top">
+                    {t.description}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
+      <p className="label-mono mt-4 text-fg-faint">
+        running = active work · sleeping = reading &amp; experimenting · stopped = paused for now
+      </p>
     </div>
   );
 }

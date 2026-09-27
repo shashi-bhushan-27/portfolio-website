@@ -1,135 +1,140 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { MessageSquare, X, Send, Bot, User } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { ArrowUp, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+const suggestions = [
+  'What is the indoor positioning patent about?',
+  'Which projects use RAG?',
+  'What is his tech stack?',
+];
 
 export function AiAssistant() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
-  const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const { messages, input, handleInputChange, handleSubmit, isLoading, append, error } =
+    useChat();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (isOpen && endOfMessagesRef.current) {
-      endOfMessagesRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, isOpen]);
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
+  }, [messages, isLoading]);
+
+  useEffect(() => {
+    if (open) inputRef.current?.focus();
+  }, [open]);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed right-4 bottom-4 z-50 sm:right-6 sm:bottom-6">
       <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute bottom-16 right-0 mb-4 w-[350px] max-w-[calc(100vw-3rem)] overflow-hidden rounded-2xl border border-border/50 bg-card shadow-2xl flex flex-col h-[500px] max-h-[calc(100vh-8rem)]"
+        {open && (
+          <motion.section
+            aria-label="Portfolio assistant"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute right-0 bottom-12 flex h-[520px] max-h-[calc(100dvh-7rem)] w-[380px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-md border border-border bg-surface shadow-[0_24px_64px_-16px_rgb(0_0_0/0.45)]"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-border/50 bg-muted/30 px-4 py-3">
-              <div className="flex items-center gap-2">
-                <div className="flex size-6 items-center justify-center rounded-full bg-primary/20">
-                  <Bot className="size-3.5 text-primary" />
-                </div>
-                <span className="text-sm font-medium">Shashi's AI Assistant</span>
-              </div>
+            <header className="flex items-center gap-2 border-b border-line px-4 py-3">
+              <span className="size-1.5 bg-signal" />
+              <span className="label-mono text-fg-muted">assistant</span>
+              <span className="label-mono text-fg-faint">· llama-3.1-8b via groq</span>
               <button
-                onClick={() => setIsOpen(false)}
-                className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                onClick={() => setOpen(false)}
+                className="ml-auto rounded-[3px] p-1 text-fg-faint hover:bg-surface-2 hover:text-fg"
+                aria-label="Close assistant"
               >
                 <X className="size-4" />
               </button>
-            </div>
+            </header>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div ref={scrollRef} className="flex-1 space-y-5 overflow-y-auto px-4 py-5">
               {messages.length === 0 ? (
-                <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground space-y-3">
-                  <Bot className="size-8 opacity-50" />
-                  <p className="text-sm">
-                    Hi! I'm an AI assistant trained on Shashi's portfolio. Ask me anything about his work, skills, or experience!
+                <div>
+                  <p className="text-sm leading-relaxed text-fg-muted">
+                    Ask about Shashi&apos;s projects, research, or stack. Answers come from a
+                    small language model with a short brief — for anything important, use the
+                    contact form.
                   </p>
+                  <div className="mt-5 space-y-1.5">
+                    {suggestions.map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => append({ role: 'user', content: s })}
+                        className="block w-full rounded-[4px] border border-line px-3 py-2 text-left text-[13px] text-fg-muted transition-colors hover:border-border hover:text-fg"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 messages.map((m) => (
-                  <div
-                    key={m.id}
-                    className={`flex gap-3 ${
-                      m.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-                    }`}
-                  >
-                    <div
-                      className={`flex size-8 shrink-0 items-center justify-center rounded-full ${
-                        m.role === 'user'
-                          ? 'bg-primary/20'
-                          : 'bg-muted border border-border/50'
-                      }`}
-                    >
-                      {m.role === 'user' ? (
-                        <User className="size-4 text-primary" />
-                      ) : (
-                        <Bot className="size-4 text-foreground" />
+                  <div key={m.id}>
+                    <p
+                      className={cn(
+                        'label-mono mb-1.5',
+                        m.role === 'user' ? 'text-fg-faint' : 'text-signal-ink'
                       )}
-                    </div>
-                    <div
-                      className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed max-w-[80%] ${
-                        m.role === 'user'
-                          ? 'bg-primary text-primary-foreground rounded-tr-sm'
-                          : 'bg-muted/50 rounded-tl-sm'
-                      }`}
+                    >
+                      {m.role === 'user' ? 'you' : 'assistant'}
+                    </p>
+                    <p
+                      className={cn(
+                        'whitespace-pre-wrap text-sm leading-relaxed',
+                        m.role === 'user' ? 'text-fg' : 'text-fg-muted'
+                      )}
                     >
                       {m.content}
-                    </div>
+                    </p>
                   </div>
                 ))
               )}
-              {isLoading && (
-                <div className="flex gap-3">
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted border border-border/50">
-                    <Bot className="size-4 text-foreground" />
-                  </div>
-                  <div className="flex items-center gap-1.5 rounded-2xl bg-muted/50 px-4 py-3 rounded-tl-sm">
-                    <div className="size-1.5 animate-bounce rounded-full bg-foreground/50" />
-                    <div className="size-1.5 animate-bounce rounded-full bg-foreground/50 delay-75" />
-                    <div className="size-1.5 animate-bounce rounded-full bg-foreground/50 delay-150" />
-                  </div>
-                </div>
+              {isLoading && messages[messages.length - 1]?.role === 'user' && (
+                <p className="label-mono text-signal-ink">
+                  assistant <span className="animate-[blink_1s_steps(1)_infinite]">▍</span>
+                </p>
               )}
-              <div ref={endOfMessagesRef} />
+              {error && (
+                <p className="text-[13px] text-danger">
+                  The assistant is unavailable right now. Try again in a moment.
+                </p>
+              )}
             </div>
 
-            {/* Input */}
-            <form
-              onSubmit={handleSubmit}
-              className="border-t border-border/50 bg-muted/10 p-3"
-            >
-              <div className="relative flex items-center">
-                <input
-                  value={input}
-                  onChange={handleInputChange}
-                  placeholder="Ask a question..."
-                  className="w-full rounded-xl border border-border/50 bg-background pl-4 pr-10 py-2.5 text-sm focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
-                />
-                <button
-                  type="submit"
-                  disabled={isLoading || !input.trim()}
-                  className="absolute right-1.5 flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
-                >
-                  <Send className="size-4" />
-                </button>
-              </div>
+            <form onSubmit={handleSubmit} className="flex items-center gap-2 border-t border-line p-2">
+              <span className="pl-2 font-mono text-sm text-signal-ink">›</span>
+              <input
+                ref={inputRef}
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Type a question"
+                className="h-9 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-faint"
+              />
+              <button
+                type="submit"
+                disabled={isLoading || !input.trim()}
+                className="flex size-8 items-center justify-center rounded-[4px] bg-signal text-on-signal transition-opacity disabled:opacity-30"
+                aria-label="Send"
+              >
+                <ArrowUp className="size-4" />
+              </button>
             </form>
-          </motion.div>
+          </motion.section>
         )}
       </AnimatePresence>
 
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-105 active:scale-95"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="flex h-9 items-center gap-2 rounded-[4px] border border-border bg-surface/90 px-3 text-fg-muted shadow-lg backdrop-blur transition-colors hover:text-fg"
       >
-        {isOpen ? <X className="size-6" /> : <MessageSquare className="size-6" />}
+        <span className={cn('size-1.5', open ? 'bg-fg-faint' : 'bg-signal')} />
+        <span className="label-mono">{open ? 'close' : 'ask ai'}</span>
       </button>
     </div>
   );
