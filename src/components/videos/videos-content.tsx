@@ -5,10 +5,11 @@ import { ArrowUpRight, Play } from 'lucide-react';
 import type { VideoData } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { siteConfig } from '@/lib/constants';
+import { youtubeThumbnail, youtubeWatchUrl } from '@/lib/youtube';
 
 function Player({ video, large = false }: { video: VideoData; large?: boolean }) {
   const [playing, setPlaying] = useState(false);
-  const thumb = `https://i.ytimg.com/vi/${video.youtubeId}/${large ? 'maxresdefault' : 'hqdefault'}.jpg`;
+  const thumb = youtubeThumbnail(video.youtubeId, large ? 'maxres' : 'hq');
 
   return (
     <div className="group relative aspect-video overflow-hidden border border-line bg-surface">
@@ -34,7 +35,8 @@ function Player({ video, large = false }: { video: VideoData; large?: boolean })
             loading="lazy"
             onError={(e) => {
               const img = e.currentTarget;
-              if (!img.src.includes('hqdefault')) img.src = `https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg`;
+              // Not every upload has a maxres thumbnail.
+              if (!img.src.includes('hqdefault')) img.src = youtubeThumbnail(video.youtubeId, 'hq');
             }}
             className="absolute inset-0 h-full w-full object-cover opacity-90 grayscale-[35%] transition-[transform,filter,opacity] duration-700 group-hover:scale-[1.02] group-hover:opacity-100 group-hover:grayscale-0"
           />
@@ -59,7 +61,7 @@ function Meta({ video, large = false }: { video: VideoData; large?: boolean }) {
     <div className="mt-4">
       <p className="label-mono flex gap-3 text-fg-faint">
         <span>{video.category}</span>
-        {video.featured && <span className="text-signal-ink">featured</span>}
+        {large && video.featured && <span className="text-signal-ink">featured</span>}
       </p>
       <h3
         className={cn(
@@ -69,11 +71,13 @@ function Meta({ video, large = false }: { video: VideoData; large?: boolean }) {
       >
         {video.title}
       </h3>
-      <p className={cn('mt-2 leading-relaxed text-fg-muted', large ? 'max-w-2xl' : 'line-clamp-2 text-sm')}>
-        {video.description}
-      </p>
+      {video.description && (
+        <p className={cn('mt-2 leading-relaxed text-fg-muted', large ? 'max-w-2xl' : 'line-clamp-2 text-sm')}>
+          {video.description}
+        </p>
+      )}
       <a
-        href={`https://youtu.be/${video.youtubeId}`}
+        href={youtubeWatchUrl(video.youtubeId)}
         target="_blank"
         rel="noopener noreferrer"
         className="label-mono mt-3 inline-flex items-center gap-1 text-fg-muted hover:text-fg"
@@ -94,7 +98,9 @@ export function VideosContent({ videos }: { videos: VideoData[] }) {
   }, [videos]);
 
   const filtered = category === 'All' ? videos : videos.filter((v) => v.category === category);
-  const [lead, ...rest] = filtered;
+  // The featured video (starred in the admin) takes the big player; otherwise the first in order.
+  const lead = filtered.find((v) => v.featured) ?? filtered[0];
+  const rest = filtered.filter((v) => v !== lead);
 
   return (
     <div className="container-page">

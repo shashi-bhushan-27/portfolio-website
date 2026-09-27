@@ -134,6 +134,16 @@ See `.env.example`.
 | `Project` | `/work`, `/work/[slug]`, home "Selected work" (featured) |
 | `Milestone` | Home "Changelog" |
 | `SystemArchitecture` | `/systems` (2D plan / 3D exploded view) |
-| `Video` | `/videos` |
+| `Video` | `/videos` — managed in the admin at **`/admin/videos`** (see below) |
 
-These are still managed with `npx prisma studio`.
+Projects, milestones and architectures are still managed with `npx prisma studio`.
+
+## Videos admin (`/admin/videos`)
+
+- Paste a YouTube link (watch, youtu.be, shorts, live, embed, or a bare ID); the title is fetched from
+  YouTube's public oEmbed endpoint and can be edited. Add a category and an optional description.
+- New videos go to the top. Reorder by dragging or with the arrow buttons.
+- **★ Star** a video to put it in the big player at the top of `/videos` (only one can be starred; with none
+  starred, the first video in the list gets it).
+- Edit or delete inline. Every change revalidates `/videos`, so it's live on the next request.
+- Code: `src/app/admin/video-actions.ts`, `src/components/admin/video-manager.tsx`, `src/lib/youtube.ts`.

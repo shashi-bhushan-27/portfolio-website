@@ -88,6 +88,17 @@ export type SystemArchitectureData = {
   edges: SystemArchitectureEdge[];
 };
 
+/** A video as the admin Videos screen needs it (no dates). */
+export type AdminVideo = {
+  id: string;
+  youtubeId: string;
+  title: string;
+  description: string;
+  category: string;
+  featured: boolean;
+  order: number;
+};
+
 export type VideoData = {
   id: string;
   youtubeId: string;
