@@ -25,7 +25,16 @@ export function CaseStudyContent({
     { id: "performance", title: "Performance", body: project.performanceMetrics },
     { id: "lessons", title: "Lessons learned", body: project.lessonsLearned },
     { id: "future", title: "Future improvements", body: project.futureImprovements },
-  ].filter((s) => s.body === null || s.body.trim());
+  ].filter((s) =>
+    s.body === null
+      ? project.challengesFaced.trim() || project.solutionsImplemented.trim()
+      : s.body.trim()
+  );
+
+  const challengeColumns = [
+    { label: "Challenges", tone: "text-danger", body: project.challengesFaced },
+    { label: "Solutions", tone: "text-signal-ink", body: project.solutionsImplemented },
+  ].filter((c) => c.body.trim());
 
   const metrics = Object.entries(project.metrics ?? {});
 
@@ -122,15 +131,13 @@ export function CaseStudyContent({
               {s.body !== null ? (
                 <Markdown source={s.body} className={i === 0 ? "mt-5 [&>p:first-child]:text-lg [&>p:first-child]:text-fg" : "mt-5"} />
               ) : (
-                <div className="mt-6 grid gap-px bg-line sm:grid-cols-2">
-                  <div className="bg-bg p-5">
-                    <p className="label-mono text-danger">Challenges</p>
-                    <Markdown source={project.challengesFaced} className="mt-3 text-[15px]" />
-                  </div>
-                  <div className="bg-bg p-5">
-                    <p className="label-mono text-signal-ink">Solutions</p>
-                    <Markdown source={project.solutionsImplemented} className="mt-3 text-[15px]" />
-                  </div>
+                <div className={`mt-6 grid gap-px bg-line ${challengeColumns.length > 1 ? "sm:grid-cols-2" : ""}`}>
+                  {challengeColumns.map((c) => (
+                    <div key={c.label} className="bg-bg p-5">
+                      <p className={`label-mono ${c.tone}`}>{c.label}</p>
+                      <Markdown source={c.body} className="mt-3 text-[15px]" />
+                    </div>
+                  ))}
                 </div>
               )}
             </section>

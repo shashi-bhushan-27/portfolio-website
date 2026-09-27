@@ -48,7 +48,7 @@ A premium, high-performance software engineering portfolio for Shashi Bhushan Vi
 ## 7. Remaining Tasks / Next Steps
 - **Custom Domain Integration**: Purchasing a domain, mapping it to Vercel, and verifying it in Resend.
 - **Google Search Console**: Submitting the sitemap for indexing.
-- **Content Expansion**: Articles are written at `/admin` and videos managed at `/admin/videos` (see `blog-system-context.md`); case studies and other models via Prisma Studio.
+- **Content Expansion**: Articles, case studies and videos are managed in the admin at `/admin`, `/admin/work` and `/admin/videos` (see `blog-system-context.md`); milestones and system diagrams via Prisma Studio.
 
 ## 8. Technical Debt
 - **Image Optimization**: Currently relying on standard Next.js `<Image>`. As the portfolio grows, integrating `next-cloudinary` could yield better auto-cropping and format selection.
@@ -56,6 +56,6 @@ A premium, high-performance software engineering portfolio for Shashi Bhushan Vi
 
 ## 9. Next Maintainer Instructions
 - Run `npm run dev` for local development.
-- Write and publish articles at `/admin`, manage videos at `/admin/videos`. Run `npx prisma studio` for projects, milestones and systems.
+- Manage articles at `/admin`, case studies at `/admin/work` and videos at `/admin/videos`. Run `npx prisma studio` for milestones and system diagrams.
 - Do NOT rewrite the styling to standard CSS or CSS modules; strictly adhere to Tailwind v4.
 - Preserve the existing `.env` structure. Ensure the Neon pooled connection string is used in production.

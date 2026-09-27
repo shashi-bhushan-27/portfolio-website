@@ -131,12 +131,30 @@ See `.env.example`.
 
 | Model | Shown at |
 |---|---|
-| `Project` | `/work`, `/work/[slug]`, home "Selected work" (featured) |
+| `Project` | `/work`, `/work/[slug]`, home "Selected work" — managed at **`/admin/work`** (see below) |
 | `Milestone` | Home "Changelog" |
 | `SystemArchitecture` | `/systems` (2D plan / 3D exploded view) |
 | `Video` | `/videos` — managed in the admin at **`/admin/videos`** (see below) |
 
-Projects, milestones and architectures are still managed with `npx prisma studio`.
+Milestones and architectures are still managed with `npx prisma studio`.
+
+## Work admin (`/admin/work`)
+
+- **New project** creates a private draft and opens the editor (an existing blank draft is reused).
+- Editor: name, one-line summary, domain (the part before the first `/` becomes the filter on `/work`), year,
+  URL slug, tech stack, source/live links, "show on the home page", metrics (name → value rows), and the ten
+  case-study sections, each Markdown with a Write/Preview toggle. Empty sections are hidden on the page.
+- Drafts autosave and are never public. **Publish** needs a name, summary and domain. Edits to a published
+  project wait for **Update live**; **Unpublish** takes it off the site. Same crash backup and edit-conflict
+  protection as articles. Full-page draft preview at `/admin/work/<id>/preview`.
+- The list: drag or arrows to reorder `/work` (new projects start at the top), ★ to show on the home page,
+  delete with confirmation. Reordering doesn't count as an edit (it leaves `updatedAt` alone).
+- Every change revalidates `/`, `/work`, all case study pages (their "Next project" link depends on the
+  order), the sitemap and the ⌘K search index.
+- Schema: `Project.status` (`DRAFT | PUBLISHED`, default `PUBLISHED`) and `Project.order` (default `0`; ties
+  fall back to newest first), so existing rows keep their current place and visibility.
+- Code: `src/app/admin/project-actions.ts`, `src/components/admin/project-editor.tsx`,
+  `src/components/admin/project-manager.tsx`, `src/lib/projects.ts`, `src/lib/project-sections.ts`.
 
 ## Videos admin (`/admin/videos`)
 

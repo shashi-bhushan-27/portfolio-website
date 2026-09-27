@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { PROJECT_ORDER, getPublishedProject } from "@/lib/projects";
 import { CaseStudyContent } from "@/components/work/case-study-content";
-import type { ProjectData } from "@/lib/types";
 
 export const revalidate = 60;
 
@@ -12,6 +12,7 @@ type Props = {
 
 export async function generateStaticParams() {
   const projects = await prisma.project.findMany({
+    where: { status: "PUBLISHED" },
     select: { slug: true },
   });
   return projects.map((project) => ({
@@ -21,10 +22,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = await prisma.project.findUnique({
-    where: { slug },
-    select: { title: true, excerpt: true },
-  });
+  const project = await getPublishedProject(slug);
 
   if (!project) return { title: "Project not found" };
 
@@ -41,9 +39,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
   const [project, all] = await Promise.all([
-    prisma.project.findUnique({ where: { slug } }),
+    getPublishedProject(slug),
     prisma.project.findMany({
-      orderBy: { createdAt: "desc" },
+      where: { status: "PUBLISHED" },
+      orderBy: PROJECT_ORDER,
       select: { slug: true, title: true },
     }),
   ]);
@@ -53,10 +52,5 @@ export default async function CaseStudyPage({ params }: Props) {
   const i = all.findIndex((p) => p.slug === slug);
   const next = all.length > 1 ? all[(i + 1) % all.length] : null;
 
-  const serialized: ProjectData = {
-    ...project,
-    metrics: project.metrics as Record<string, string> | null,
-  };
-
-  return <CaseStudyContent project={serialized} next={next} />;
+  return <CaseStudyContent project={project} next={next} />;
 }

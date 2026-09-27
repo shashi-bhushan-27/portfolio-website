@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { PROJECT_ORDER } from '@/lib/projects';
 
 export const revalidate = 300;
 
@@ -11,7 +12,8 @@ export async function GET() {
       select: { slug: true, title: true, category: true },
     }),
     prisma.project.findMany({
-      orderBy: { createdAt: 'desc' },
+      where: { status: 'PUBLISHED' },
+      orderBy: PROJECT_ORDER,
       select: { slug: true, title: true, domain: true },
     }),
   ]);
