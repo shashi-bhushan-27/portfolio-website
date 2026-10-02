@@ -1,0 +1,10 @@
+/*
+ * Utilities for the RPG only. /play's loader imports this file, so the home page never
+ * downloads it, and globals.css excludes src/game from its own scan. Theme variables
+ * already live in globals.css; only the utilities this folder uses are generated here.
+ */
+@import 'tailwindcss/theme' theme(reference);
+@import '../app/tokens.css';
+@import 'tailwindcss/utilities' source(none);
+@source './';
+@source '../app/play';

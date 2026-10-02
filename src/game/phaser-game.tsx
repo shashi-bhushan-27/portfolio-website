@@ -11,6 +11,24 @@ type Props = GameBridge & {
   className?: string;
 };
 
+/** If the renderer hasn't come up by now, something failed inside Phaser's own callbacks. */
+const BOOT_TIMEOUT_MS = 10_000;
+
+/** Resolves once the element has a non-zero size (WebGL can't create a 0×0 framebuffer). */
+function whenSized(el: HTMLElement, signal: AbortSignal) {
+  return new Promise<void>((resolve) => {
+    if (el.clientWidth > 0 && el.clientHeight > 0) return resolve();
+    const ro = new ResizeObserver(() => {
+      if (el.clientWidth > 0 && el.clientHeight > 0) {
+        ro.disconnect();
+        resolve();
+      }
+    });
+    ro.observe(el);
+    signal.addEventListener('abort', () => ro.disconnect());
+  });
+}
+
 /** Owns the Phaser instance: imports the engine on mount, destroys it on unmount. */
 export function PhaserGame({ entered, className, ...events }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,26 +40,36 @@ export function PhaserGame({ entered, className, ...events }: Props) {
   });
 
   useEffect(() => {
-    let cancelled = false;
+    const abort = new AbortController();
+    let watchdog: ReturnType<typeof setTimeout> | undefined;
+    const fail = (error: unknown) => {
+      if (!abort.signal.aborted) eventsRef.current.onError(error);
+    };
     const bridge: GameBridge = {
-      onRendererReady: (renderer) => eventsRef.current.onRendererReady(renderer),
+      onRendererReady: (renderer) => {
+        clearTimeout(watchdog);
+        eventsRef.current.onRendererReady(renderer);
+      },
       onAssetProgress: (progress) => eventsRef.current.onAssetProgress(progress),
       onReady: () => eventsRef.current.onReady(),
     };
 
     import('@/game/engine/create-game')
-      .then(({ createGame }) => {
+      .then(async ({ createGame }) => {
+        const el = containerRef.current;
         // Unmounted (or StrictMode's first pass) before the chunk arrived.
-        if (cancelled || !containerRef.current) return;
+        if (abort.signal.aborted || !el) return;
         eventsRef.current.onEngineLoaded();
-        handleRef.current = createGame(containerRef.current, bridge);
+        await whenSized(el, abort.signal);
+        if (abort.signal.aborted) return;
+        watchdog = setTimeout(() => fail(new Error('The game engine didn’t finish starting.')), BOOT_TIMEOUT_MS);
+        handleRef.current = createGame(el, bridge);
       })
-      .catch((error: unknown) => {
-        if (!cancelled) eventsRef.current.onError(error);
-      });
+      .catch(fail);
 
     return () => {
-      cancelled = true;
+      abort.abort();
+      clearTimeout(watchdog);
       handleRef.current?.destroy();
       handleRef.current = null;
     };
@@ -51,5 +79,14 @@ export function PhaserGame({ entered, className, ...events }: Props) {
     if (entered) handleRef.current?.enterWorld();
   }, [entered]);
 
-  return <div ref={containerRef} className={className} aria-label="Game world" role="application" />;
+  return (
+    <div
+      ref={containerRef}
+      id="game-world"
+      tabIndex={-1}
+      className={className}
+      role="application"
+      aria-label="SHASHI.EXE game world. Move with W A S D or the arrow keys, interact with E."
+    />
+  );
 }

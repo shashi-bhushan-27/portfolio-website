@@ -33,7 +33,19 @@ function stages(s: BootState) {
   ];
 }
 
-export function BootScreen({ state, onEnter }: { state: BootState; onEnter?: () => void }) {
+export function BootScreen({
+  state,
+  onEnter,
+  extras,
+  still,
+}: {
+  state: BootState;
+  onEnter?: () => void;
+  /** Settings and shortcuts the shell adds once it has loaded. */
+  extras?: React.ReactNode;
+  /** Reduced motion: no blinking caret. */
+  still?: boolean;
+}) {
   const steps = stages(state);
   const progress = steps.reduce((sum, s) => sum + s.weight * (s.done ? 1 : (s.partial ?? 0)), 0);
   const pct = Math.round(progress * 100);
@@ -47,7 +59,7 @@ export function BootScreen({ state, onEnter }: { state: BootState; onEnter?: () 
     if (document.activeElement === document.body) enterRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       // A focused button or link handles Enter itself.
-      if (e.key !== 'Enter' || (e.target as HTMLElement).closest('a, button')) return;
+      if (e.key !== 'Enter' || (e.target instanceof Element && e.target.closest('a, button'))) return;
       e.preventDefault();
       onEnter();
     };
@@ -61,7 +73,7 @@ export function BootScreen({ state, onEnter }: { state: BootState; onEnter?: () 
         <p className="label-mono text-fg-faint">Interactive portfolio</p>
         <h1 id="boot-title" className="mt-3 font-mono text-2xl tracking-[-0.03em] text-fg sm:text-[28px]">
           {ready ? 'Developer world ready' : 'Booting developer world'}
-          <span aria-hidden className="ml-1 animate-[blink_1s_steps(1)_infinite] text-signal-ink">
+          <span aria-hidden className={cn('ml-1 text-signal-ink', !still && 'animate-[blink_1s_steps(1)_infinite]')}>
             _
           </span>
         </h1>
@@ -128,6 +140,8 @@ export function BootScreen({ state, onEnter }: { state: BootState; onEnter?: () 
         {ready && (
           <p className="label-mono mt-3 text-fg-faint [@media(pointer:coarse)]:hidden">Press Enter</p>
         )}
+
+        {extras}
 
         <p className="mt-12 max-w-sm border-t border-line pt-5 text-sm leading-relaxed text-fg-muted">
           A small, optional, playable take on the portfolio. Everything in it is also on the

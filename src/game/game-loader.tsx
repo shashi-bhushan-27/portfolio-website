@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import '@/game/game.css';
 import { BootScreen } from '@/game/ui/boot-screen';
 import { GameFrame } from '@/game/ui/game-frame';
 
@@ -9,7 +10,7 @@ import { GameFrame } from '@/game/ui/game-frame';
 const GameShell = dynamic(() => import('@/game/game-shell'), {
   ssr: false,
   loading: () => (
-    <GameFrame status="v0.1 · booting">
+    <GameFrame status="v1.0 · booting">
       <div className="absolute inset-0 bg-bg">
         <BootScreen
           state={{ shellLoaded: false, engineLoaded: false, renderer: null, assets: 0, ready: false }}
@@ -19,6 +20,6 @@ const GameShell = dynamic(() => import('@/game/game-shell'), {
   ),
 });
 
-export function GameLoader() {
-  return <GameShell />;
+export function GameLoader({ publishedSlugs }: { publishedSlugs: string[] }) {
+  return <GameShell publishedSlugs={publishedSlugs} />;
 }

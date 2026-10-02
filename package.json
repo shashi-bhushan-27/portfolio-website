@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "game:assets": "tsx scripts/build-game-assets.ts && tsx scripts/build-game-audio.ts",
     "seed": "ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/seed.ts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
@@ -28,6 +29,7 @@
     "cloudinary": "^2.10.0",
     "clsx": "^2.1.1",
     "github-slugger": "^2.0.0",
+    "howler": "^2.2.4",
     "lucide-react": "^1.17.0",
     "mdast-util-to-string": "^4.0.0",
     "motion": "^12.40.0",
@@ -47,11 +49,13 @@
     "three": "^0.186.1",
     "ts-node": "^10.9.2",
     "unified": "^11.0.5",
-    "unist-util-visit": "^5.1.0"
+    "unist-util-visit": "^5.1.0",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@prisma/client": "^5.22.0",
     "@tailwindcss/postcss": "^4",
+    "@types/howler": "^2.2.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

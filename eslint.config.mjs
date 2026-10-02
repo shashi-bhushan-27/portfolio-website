@@ -31,7 +31,7 @@ const eslintConfig = defineConfig([
   // Inside the game, the React layer reaches Phaser only via the dynamic engine import.
   {
     files: ["src/game/**/*.{ts,tsx}", "src/app/play/**/*.{ts,tsx}"],
-    ignores: ["src/game/engine/**", "src/game/scenes/**", "src/game/entities/**", "src/game/systems/**"],
+    ignores: ["src/game/engine/**", "src/game/scenes/**", "src/game/entities/**"],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -45,9 +45,17 @@ const eslintConfig = defineConfig([
               name: "@/game/engine/create-game",
               message: "Use a dynamic import() so Phaser stays in its own chunk.",
             },
+            {
+              name: "motion/react",
+              message:
+                "Sharing motion with this route changes how it's chunked for the home page (+4.6 KB gzip on /). Use useAppear (Web Animations API).",
+            },
           ],
           patterns: [
-            { group: ["@/game/scenes/*"], message: "Scenes import Phaser; reach them through the engine." },
+            {
+              group: ["@/game/scenes/*", "@/game/entities/*"],
+              message: "Scenes and entities import Phaser; reach them through the engine.",
+            },
           ],
         },
       ],

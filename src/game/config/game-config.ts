@@ -6,22 +6,24 @@ export const SCENES = {
   world: 'world',
 } as const;
 
+/** Texture keys, and where each one is loaded from (all under /public/game). */
 export const TEXTURES = {
-  player: 'player-placeholder',
+  tiles: { key: 'tiles', url: '/game/tilesets/world.png' },
+  player: { key: 'shashi', url: '/game/characters/shashi.png' },
+  npcs: { key: 'npcs', url: '/game/npcs/npcs.png' },
+  ui: { key: 'ui', url: '/game/ui/ui.png' },
 } as const;
 
-/** World grid, in tiles. */
+/** Tile size in pixels. */
 export const TILE = 16;
-export const WORLD = { cols: 40, rows: 24 } as const;
 
-/** World-units per second. */
-export const PLAYER_SPEED = 96;
+/** World pixels per second. */
+export const PLAYER_SPEED = 78;
+export const COFFEE_BOOST = 1.17;
 
-/** sRGB approximations of the site's dark tokens (globals.css), for drawing on the canvas. */
-export const PALETTE = {
-  floor: 0x121418,
-  gridLine: 0xf3f4f6,
-  edge: 0x3a3f47,
-  signal: 0xc5ee4f,
-  signalDark: 0x5c7a12,
-} as const;
+/** Roughly how many tiles the camera should frame; zoom is the whole number closest to that. */
+export const VIEW_TILES = { cols: 24, rows: 14 } as const;
+export const ZOOM = { min: 2, max: 5 } as const;
+
+/** Background behind the map (the void between rooms). */
+export const VOID_COLOR = '#0b0d10';

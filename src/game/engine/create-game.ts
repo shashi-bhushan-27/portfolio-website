@@ -16,14 +16,21 @@ export function createGame(parent: HTMLElement, bridge: GameBridge): GameHandle 
     transparent: true,
     pixelArt: true,
     banner: false,
-    // Sound comes later through Howler; don't let Phaser open an AudioContext.
+    // Sound goes through Howler (systems/audio.ts); Phaser's own audio stays off.
     audio: { noAudio: true },
     scale: { mode: Phaser.Scale.RESIZE },
+    physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 } } },
+    // Keyboard events are read from the window, but nothing is captured: the HTML
+    // overlays keep Space, Enter and typing.
+    input: { keyboard: { capture: [] } },
     scene: [new BootScene(), new PreloadScene(bridge), new WorldScene()],
     callbacks: {
       postBoot: (g) => bridge.onRendererReady(g.renderer.type === Phaser.WEBGL ? 'WebGL' : 'Canvas'),
     },
   });
+
+  // Console handle for debugging and tests in development; compiled out of production builds.
+  if (process.env.NODE_ENV === 'development') Object.assign(window, { __SHASHI_GAME__: game });
 
   return {
     enterWorld: () => {
