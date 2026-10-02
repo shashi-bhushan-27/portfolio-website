@@ -105,7 +105,7 @@ export function Now() {
             ML ensembles, RAG pipelines, and the product surface on top.
           </p>
           <p className="mt-5 leading-relaxed text-fg-muted">
-            I hold a patent in signal processing for indoor positioning and have shipped
+            I have a published patent in signal processing for indoor positioning and have shipped
             platforms across fintech, IoT, and developer tools. I care about understanding the
             problem before writing code, and about systems that hold up in production.
           </p>

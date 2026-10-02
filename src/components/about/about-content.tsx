@@ -62,7 +62,7 @@ export function AboutContent() {
             indoor localization, and AI-powered applications.
           </p>
           <p className="max-w-[62ch] leading-relaxed text-fg-muted">
-            I hold a patent in signal processing for indoor positioning and have built
+            I have a published patent in signal processing for indoor positioning and have built
             production-grade platforms across fintech, IoT, and developer tools. My approach is
             rooted in understanding the problem deeply before writing code: the best systems
             come from clear thinking about architecture, trade-offs, and the people using them.

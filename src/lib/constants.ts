@@ -8,7 +8,8 @@ export const siteConfig = {
   ogImage: "/og/default.png",
   portrait:
     "https://res.cloudinary.com/djdvvscoe/image/upload/v1781194339/portfolio/portrait.jpg",
-  resume: "/resume/shashi-bhushan-vijay-resume.pdf",
+  /** Serves the résumé set live at /admin/resumes (see src/app/resume/route.ts). */
+  resume: "/resume",
   links: {
     github: "https://github.com/shashi-bhushan-27",
     linkedin: "https://www.linkedin.com/in/shashi-bhushan-/",
@@ -25,7 +26,7 @@ export const siteConfig = {
   subheadline:
     "I design and engineer intelligent software systems spanning machine learning, distributed architectures, indoor localization, AI-powered applications, and modern web platforms.",
   tags: [
-    "Patent Holder",
+    "Patent Published",
     "Software Engineer",
     "AI/ML Engineer",
     "Full Stack Developer",

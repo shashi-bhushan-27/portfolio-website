@@ -5,7 +5,7 @@ import { PageHeader } from '@/components/ui/section-header';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Software engineer specializing in machine learning, distributed systems, indoor localization, and AI-powered applications. Patent holder in signal processing for indoor positioning.',
+    'Software engineer specializing in machine learning, distributed systems, indoor localization, and AI-powered applications. Published patent in signal processing for indoor positioning.',
   openGraph: {
     title: 'About — Shashi Bhushan Vijay',
     description:

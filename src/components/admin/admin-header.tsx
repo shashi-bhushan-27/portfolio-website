@@ -8,6 +8,7 @@ const sections = [
   { key: 'articles', label: 'Articles', href: '/admin', live: '/insights' },
   { key: 'work', label: 'Work', href: '/admin/work', live: '/work' },
   { key: 'videos', label: 'Videos', href: '/admin/videos', live: '/videos' },
+  { key: 'resumes', label: 'Résumés', href: '/admin/resumes', live: '/resume' },
 ] as const;
 
 export type AdminSection = (typeof sections)[number]['key'];
