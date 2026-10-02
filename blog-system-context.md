@@ -13,7 +13,7 @@ Studio, no waiting for the 60-second ISR window.
 | Layer | Technology |
 |---|---|
 | Framework | Next.js 16.2 (App Router, Turbopack), React 19 |
-| Database | Neon Serverless PostgreSQL via Prisma 5 |
+| Database | Neon Serverless PostgreSQL via Prisma 7 + `@prisma/adapter-neon` (CLI config in `prisma.config.ts`) |
 | Rendering | ISR (`revalidate = 60`) + on-demand `revalidatePath` from the editor |
 | Content | Markdown (GFM) stored in `Article.content` |
 | Markdown | `react-markdown` + `remark-gfm` + `rehype-slug` + `rehype-highlight` (one renderer for site and editor) |
@@ -110,7 +110,11 @@ banner: **Load latest** (discard yours) or **Overwrite with mine**.
   signed with a key derived from `ADMIN_SESSION_SECRET` + `ADMIN_PASSWORD` (changing either signs everyone out).
 - Login: constant-time password comparison, a delay on failure, and 5 failures / 10 min per IP (per server
   instance, best effort — use a long password).
-- Uploads: admin-only, same-origin, PNG/JPEG/WebP/GIF/AVIF only (no SVG), ≤ 8 MB.
+- Uploads: admin-only, same-origin, PNG/JPEG/WebP/GIF/AVIF only (no SVG), ≤ 8 MB. Résumés: PDF only
+  (checked by file signature, not just the name), ≤ 4 MB.
+- Public endpoints are rate limited in Postgres (`src/lib/rate-limit.ts`, `RateLimit` table), so limits hold
+  across serverless instances. IPs are stored hashed. Assistant: 8/min, 40/hour, 100/day per IP and
+  `CHAT_DAILY_LIMIT` (default 2000) for the whole site. Contact form: 3 per 10 min, 10/day per IP, 200/day site-wide.
 
 ---
 
@@ -122,6 +126,9 @@ banner: **Load latest** (discard yours) or **Overwrite with mine**.
 | `ADMIN_PASSWORD` | Admin sign-in |
 | `ADMIN_SESSION_SECRET` | Cookie signing (32+ random characters) |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Editor image uploads |
+| `GEMINI_API_KEY` | Site assistant (Google AI Studio key) |
+| `GEMINI_MODEL`, `GEMINI_FALLBACK_MODELS`, `CHAT_DAILY_LIMIT` | Optional assistant overrides |
+| `RESEND_API_KEY` | Contact form email |
 
 See `.env.example`.
 
@@ -135,8 +142,11 @@ See `.env.example`.
 | `Milestone` | Home "Changelog" |
 | `SystemArchitecture` | `/systems` (2D plan / 3D exploded view) |
 | `Video` | `/videos` — managed in the admin at **`/admin/videos`** (see below) |
+| `Resume` | `/resume` — managed in the admin at **`/admin/resumes`** (see below) |
+| `RateLimit` | Not shown; counters for the assistant and contact form |
 
-Milestones and architectures are still managed with `npx prisma studio`.
+Milestones and architectures are still managed with `npx prisma studio`. Each architecture can be linked
+directly as `/systems#<architectureId>` (e.g. `/systems#flex-dca`).
 
 ## Work admin (`/admin/work`)
 
@@ -165,3 +175,32 @@ Milestones and architectures are still managed with `npx prisma studio`.
   starred, the first video in the list gets it).
 - Edit or delete inline. Every change revalidates `/videos`, so it's live on the next request.
 - Code: `src/app/admin/video-actions.ts`, `src/components/admin/video-manager.tsx`, `src/lib/youtube.ts`.
+
+## Résumés admin (`/admin/resumes`)
+
+- Upload PDFs (drag-drop or pick, ≤ 4 MB) and keep every version. Each gets a private label.
+- Exactly one version is **live**: pick it with the radio button (or tick "Make it live" while uploading).
+  Visitors get the live one at **`/resume`** — the Résumé buttons, the ⌘K menu and the assistant all link there.
+  It downloads as `Shashi-Bhushan-Vijay-Resume.pdf` whatever the uploaded file was called.
+- With nothing live (or nothing uploaded), `/resume` redirects to the bundled
+  `public/resume/shashi-bhushan-vijay-resume.pdf`, so the link never breaks.
+- Open any version privately via the ↗ button (`/api/admin/resumes/<id>`, admin-only). Rename or delete inline.
+- PDFs are stored in Postgres (`Resume.data`) — Cloudinary blocks PDF delivery on this account, and résumés are small.
+- Code: `src/app/resume/route.ts`, `src/app/api/admin/resumes/`, `src/app/admin/resume-actions.ts`,
+  `src/components/admin/resume-manager.tsx`, `src/lib/resumes.ts`.
+
+## Site assistant (`/api/chat`)
+
+- The "ask ai" widget answers **only** from the site's content and links to the exact page each fact came
+  from (e.g. `/work/proofstack#architecture`, `/insights/<slug>#<heading>`, `/systems#flex-dca`). Answers show a
+  "Sources on this site" list. Anything not on the site gets "I don't know" plus a pointer to `/contact`.
+- Knowledge (`src/lib/assistant/knowledge.ts`): profile, patent and research facts (`src/lib/content.ts`), every
+  published project (all case-study sections), every published article (body capped at 8k characters, with
+  heading anchors), system diagrams, videos, the Exploring log and milestones. Cached for 10 minutes and
+  refreshed immediately when an article, project or video is changed in the admin.
+- Prompt (`src/lib/assistant/prompt.ts`): everything fits in the prompt today (~60k characters). Past 120k,
+  the documents most relevant to the question are included in full and the rest only by title + URL.
+- Models (`src/lib/assistant/model.ts`): `gemini-3.5-flash-lite`, falling back to `gemini-3.1-flash-lite` and
+  then `gemini-3.5-flash` when a model errors (Gemini returns 503 under load) or takes over 4 s to start answering.
+- The client only sends plain user/assistant text; the server drops other parts, caps questions at 1,000
+  characters and keeps the last 12 messages. The chat UI is loaded on first open, not with every page.

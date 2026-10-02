@@ -99,6 +99,16 @@ export type SystemArchitectureData = {
   edges: SystemArchitectureEdge[];
 };
 
+/** A résumé as the admin Résumés screen needs it (no file bytes). */
+export type AdminResume = {
+  id: string;
+  label: string;
+  fileName: string;
+  size: number;
+  active: boolean;
+  createdAt: string; // ISO string
+};
+
 /** A video as the admin Videos screen needs it (no dates). */
 export type AdminVideo = {
   id: string;

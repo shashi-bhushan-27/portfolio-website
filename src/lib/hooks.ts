@@ -40,3 +40,21 @@ export function useScrolledPast(offset: number) {
     () => false
   );
 }
+
+/** The URL fragment without `#`; '' during SSR. Updates on `hashchange`. */
+export function useLocationHash() {
+  return useSyncExternalStore(
+    (onChange) => {
+      window.addEventListener('hashchange', onChange);
+      return () => window.removeEventListener('hashchange', onChange);
+    },
+    () => decodeURIComponent(window.location.hash.slice(1)),
+    () => ''
+  );
+}
+
+/** Replace the fragment without scrolling or adding a history entry, and notify useLocationHash. */
+export function replaceLocationHash(hash: string) {
+  window.history.replaceState(window.history.state, '', `#${encodeURIComponent(hash)}`);
+  window.dispatchEvent(new HashChangeEvent('hashchange'));
+}

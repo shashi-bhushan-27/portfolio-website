@@ -1,9 +1,10 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
+import { KNOWLEDGE_TAG } from '@/lib/assistant/knowledge';
 import { parseYouTubeId } from '@/lib/youtube';
 
 export type VideoInput = {
@@ -47,6 +48,7 @@ function validate(input: VideoInput):
 function refresh() {
   revalidatePath('/videos');
   revalidatePath('/admin/videos');
+  updateTag(KNOWLEDGE_TAG);
 }
 
 function failure(e: unknown, action: string): VideoResult {
