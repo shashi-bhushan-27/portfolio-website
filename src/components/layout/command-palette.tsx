@@ -10,6 +10,7 @@ import {
   CornerDownLeft,
   FileText,
   FolderGit2,
+  Gamepad2,
   Moon,
   Rss,
   Search,
@@ -180,6 +181,15 @@ export function CommandPalette() {
         title: 'LinkedIn profile',
         icon: ArrowRight,
         run: external(siteConfig.links.linkedin),
+      },
+      {
+        id: 'x-play',
+        group: 'Actions',
+        title: 'Play SHASHI.EXE',
+        hint: '/play',
+        keywords: 'game rpg interactive',
+        icon: Gamepad2,
+        run: go('/play'),
       },
       {
         id: 'x-rss',

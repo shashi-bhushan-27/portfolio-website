@@ -4,6 +4,7 @@ import { siteConfig } from '@/lib/constants';
 import { buttonStyles } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-button';
 import { HeroCanvas } from '@/components/home/hero-canvas';
+import { PlayGameLink } from '@/components/home/play-game-link';
 import { cn } from '@/lib/utils';
 
 const lines = ['Building systems', 'that understand,', 'locate, and scale.'];
@@ -63,6 +64,8 @@ export function Hero() {
               className="px-3 text-sm"
             />
           </div>
+
+          <PlayGameLink className="fade-in mt-6" style={delay(700)} />
         </div>
       </div>
 
