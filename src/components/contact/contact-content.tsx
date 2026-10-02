@@ -55,6 +55,7 @@ export function ContactContent() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [state, setState] = useState<FormState>('idle');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [serverError, setServerError] = useState('');
 
   function validate() {
     const errs: Record<string, string> = {};
@@ -79,13 +80,19 @@ export function ContactContent() {
       return;
     }
     setState('submitting');
+    setServerError('');
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error('Failed to send message');
+      if (!res.ok) {
+        // 400/429 carry a sentence written for the visitor; other failures get the generic line.
+        const data = (await res.json().catch(() => null)) as { error?: string } | null;
+        if ((res.status === 400 || res.status === 429) && data?.error) setServerError(data.error);
+        throw new Error('Failed to send message');
+      }
       setState('success');
       setForm({ name: '', email: '', subject: '', message: '' });
     } catch {
@@ -176,6 +183,7 @@ export function ContactContent() {
                   id="name"
                   name="name"
                   autoComplete="name"
+                  maxLength={120}
                   value={form.name}
                   onChange={onChange}
                   aria-invalid={!!errors.name}
@@ -189,6 +197,7 @@ export function ContactContent() {
                   name="email"
                   type="email"
                   autoComplete="email"
+                  maxLength={200}
                   value={form.email}
                   onChange={onChange}
                   aria-invalid={!!errors.email}
@@ -198,13 +207,14 @@ export function ContactContent() {
               </Field>
             </div>
             <Field id="subject" label="Subject">
-              <input id="subject" name="subject" value={form.subject} onChange={onChange} className={input()} />
+              <input id="subject" name="subject" maxLength={200} value={form.subject} onChange={onChange} className={input()} />
             </Field>
             <Field id="message" label="Message" required error={errors.message}>
               <textarea
                 id="message"
                 name="message"
                 rows={7}
+                maxLength={5000}
                 value={form.message}
                 onChange={onChange}
                 placeholder="What are you building, and where could I help?"
@@ -225,7 +235,7 @@ export function ContactContent() {
               </button>
               {state === 'error' && (
                 <p className="text-sm text-danger" role="alert">
-                  Something went wrong. Try again, or email me directly.
+                  {serverError || 'Something went wrong. Try again, or email me directly.'}
                 </p>
               )}
             </div>

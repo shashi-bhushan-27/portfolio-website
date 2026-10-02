@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import 'dotenv/config';
+import { prisma } from '../src/lib/prisma';
 
 async function main() {
   const projects = await prisma.project.findMany({

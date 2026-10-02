@@ -2,9 +2,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// The connection URL lives in prisma.config.ts (Prisma 7).
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum ProjectStatus {
@@ -98,4 +98,29 @@ model Video {
   order       Int      @default(0) // Controls display order in gallery
   publishedAt DateTime @default(now())
   createdAt   DateTime @default(now())
+}
+
+/// Résumé PDFs uploaded in the admin at /admin/resumes. The active one is served at /resume.
+/// Files are small (~150 KB), so they live in Postgres rather than a separate blob store.
+model Resume {
+  id        String   @id @default(cuid())
+  label     String   // shown in the admin only, e.g. "SWE — Oct 2026"
+  fileName  String   // original upload name, for reference
+  size      Int      // bytes
+  sha256    String   // content hash, used as the ETag
+  data      Bytes
+  active    Boolean  @default(false) // at most one row is active; enforced in resume-actions.ts
+  createdAt DateTime @default(now())
+
+  @@index([active])
+}
+
+/// Fixed-window counters for rate limiting public endpoints (chat, contact).
+/// Rows are keyed per bucket + client + window and pruned after they expire.
+model RateLimit {
+  key       String   @id
+  count     Int      @default(0)
+  expiresAt DateTime
+
+  @@index([expiresAt])
 }

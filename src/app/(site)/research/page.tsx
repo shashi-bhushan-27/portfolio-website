@@ -14,7 +14,7 @@ export default function ResearchPage() {
       <PageHeader
         path="research"
         title="Research & publications"
-        description="Signal processing, machine learning, and embedded systems — from patent filings to production prototypes."
+        description="Signal processing, machine learning, and embedded systems — from a published patent to production prototypes."
       />
       <ResearchContent />
     </>

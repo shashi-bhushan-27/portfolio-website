@@ -9,9 +9,8 @@
  * Only one video should be featured: it takes the big player on /videos.
  */
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import 'dotenv/config';
+import { prisma } from '../src/lib/prisma';
 
 const videos = [
   {

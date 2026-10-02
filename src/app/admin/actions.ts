@@ -1,9 +1,10 @@
 'use server';
 
 import { randomBytes } from 'node:crypto';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { Prisma } from '@prisma/client';
+import { KNOWLEDGE_TAG } from '@/lib/assistant/knowledge';
 import { prisma } from '@/lib/prisma';
 import {
   adminConfigured,
@@ -120,6 +121,7 @@ function revalidatePublic(...slugs: (string | undefined)[]) {
   revalidatePath('/feed.xml');
   revalidatePath('/sitemap.xml');
   revalidatePath('/api/search');
+  updateTag(KNOWLEDGE_TAG);
 }
 
 function friendlyError(e: unknown): SaveResult {

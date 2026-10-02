@@ -1,36 +1,10 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { usePrefersReducedMotion } from '@/lib/hooks';
-import type { SystemArchitectureData, SystemArchitectureNode } from '@/lib/types';
+import { replaceLocationHash, useLocationHash, usePrefersReducedMotion } from '@/lib/hooks';
+import type { SystemArchitectureData } from '@/lib/types';
 import { cn } from '@/lib/utils';
-
-/* Diagram coordinates are authored in a 620×300 space (see SystemArchitecture.nodes). */
-const W = 620;
-const H = 300;
-const NODE_W = 130;
-const NODE_H = 56;
-
-function center(n: SystemArchitectureNode) {
-  return { x: n.x + NODE_W / 2, y: n.y + NODE_H / 2 };
-}
-
-/** Clip the centre-to-centre segment to the edges of both node boxes. */
-function edgeSegment(a: SystemArchitectureNode, b: SystemArchitectureNode, gap = 6) {
-  const c1 = center(a);
-  const c2 = center(b);
-  const dx = c2.x - c1.x;
-  const dy = c2.y - c1.y;
-  const exit = (hw: number, hh: number) =>
-    Math.min(dx ? hw / Math.abs(dx) : Infinity, dy ? hh / Math.abs(dy) : Infinity);
-  const t = exit(NODE_W / 2 + gap, NODE_H / 2 + gap);
-  return {
-    x1: c1.x + dx * t,
-    y1: c1.y + dy * t,
-    x2: c2.x - dx * t,
-    y2: c2.y - dy * t,
-  };
-}
+import { FONT, layoutDiagram } from './diagram-layout';
 
 function Board({
   arch,
@@ -44,7 +18,8 @@ function Board({
   onHover: (id: string | null) => void;
 }) {
   const reduced = usePrefersReducedMotion();
-  const byId = useMemo(() => new Map(arch.nodes.map((n) => [n.id, n])), [arch.nodes]);
+  const layout = useMemo(() => layoutDiagram(arch), [arch]);
+  const { view } = layout;
 
   const linked = useMemo(() => {
     if (!hovered) return null;
@@ -61,122 +36,139 @@ function Board({
   }, [hovered, arch.edges]);
 
   const is3d = mode === '3d';
+  /** Diagram units → CSS length. The board is a size container, so text scales with it. */
+  const u = (n: number) => `calc(100cqw * ${n} / ${view.w})`;
+  const place = (r: { x: number; y: number; w: number; h: number }) => ({
+    left: `${((r.x - view.x) / view.w) * 100}%`,
+    top: `${((r.y - view.y) / view.h) * 100}%`,
+    width: `${(r.w / view.w) * 100}%`,
+    height: `${(r.h / view.h) * 100}%`,
+  });
 
   return (
     <div className="overflow-x-auto overflow-y-hidden">
-      <div
-        className={cn(
-          'relative min-w-[640px] [perspective:1600px] transition-[padding] duration-700',
-          is3d ? 'pt-6 pb-16' : 'py-10'
-        )}
-        style={{ perspectiveOrigin: '50% 30%' }}
-      >
+      <div className={cn('min-w-[680px] transition-[padding] duration-700', is3d ? 'pt-6 pb-14' : 'py-8')}>
         <div
-          className={cn(
-            'relative mx-auto aspect-[620/300] w-full max-w-[860px] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [transform-style:preserve-3d]',
-            is3d && '[transform:rotateX(52deg)_rotateZ(-26deg)_scale(0.82)]'
-          )}
+          className="relative mx-auto w-full max-w-[900px] [perspective:1600px]"
+          style={{ containerType: 'inline-size', perspectiveOrigin: '50% 30%' }}
         >
-          {/* the board */}
           <div
             className={cn(
-              'absolute -inset-6 border border-line bg-blueprint transition-colors duration-700',
-              is3d ? 'bg-surface/60' : 'bg-transparent'
+              'relative w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [transform-style:preserve-3d]',
+              is3d && '[transform:rotateX(52deg)_rotateZ(-26deg)_scale(0.82)]'
             )}
-          />
-
-          <svg
-            viewBox={`0 0 ${W} ${H}`}
-            preserveAspectRatio="none"
-            className="absolute inset-0 h-full w-full overflow-visible"
-            aria-hidden
+            style={{ aspectRatio: `${view.w} / ${view.h}` }}
           >
-            <defs>
-              <marker id="sys-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M0 0 L10 5 L0 10 z" className="fill-fg-faint" />
-              </marker>
-            </defs>
-            {arch.edges.map((e, i) => {
-              const a = byId.get(e.from);
-              const b = byId.get(e.to);
-              if (!a || !b) return null;
-              const s = edgeSegment(a, b);
-              const on = !linked || linked.edges.has(i);
-              const path = `M${s.x1} ${s.y1} L${s.x2} ${s.y2}`;
-              return (
-                <g key={i} className={cn('transition-opacity duration-300', on ? 'opacity-100' : 'opacity-15')}>
-                  <path
-                    d={path}
-                    className={linked?.edges.has(i) ? 'stroke-signal-ink' : 'stroke-fg-faint'}
-                    strokeWidth={1.25}
-                    strokeDasharray="5 4"
-                    fill="none"
-                    markerEnd="url(#sys-arrow)"
-                    style={reduced ? undefined : { animation: 'dash-flow 1.1s linear infinite' }}
-                  />
-                  {!reduced && (
-                    <circle r={2.6} className="fill-signal">
-                      <animateMotion dur={`${1.8 + (i % 3) * 0.4}s`} repeatCount="indefinite" path={path} />
-                    </circle>
-                  )}
-                  {e.label && (
-                    <text
-                      x={(s.x1 + s.x2) / 2}
-                      y={(s.y1 + s.y2) / 2 - 7}
-                      textAnchor="middle"
-                      className="fill-fg-muted font-mono text-[9px]"
-                    >
-                      {e.label}
-                    </text>
-                  )}
-                </g>
-              );
-            })}
-          </svg>
+            {/* the board */}
+            <div
+              className={cn(
+                'absolute inset-0 border border-line bg-blueprint transition-colors duration-700',
+                is3d ? 'bg-surface/60' : 'bg-transparent'
+              )}
+            />
 
-          {arch.nodes.map((n) => {
-            const on = !linked || linked.nodes.has(n.id);
-            const lifted = hovered === n.id;
-            return (
-              <div
-                key={n.id}
-                className="absolute [transform-style:preserve-3d]"
-                style={{
-                  left: `${(n.x / W) * 100}%`,
-                  top: `${(n.y / H) * 100}%`,
-                  width: `${(NODE_W / W) * 100}%`,
-                  height: `${(NODE_H / H) * 100}%`,
-                }}
-              >
-                {/* shadow on the board, visible when lifted in 3D */}
+            <svg
+              viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`}
+              preserveAspectRatio="none"
+              className="absolute inset-0 h-full w-full overflow-visible"
+              aria-hidden
+            >
+              <defs>
+                <marker id="sys-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 L10 5 L0 10 z" className="fill-fg-faint" />
+                </marker>
+              </defs>
+              {layout.edges.map((e) => {
+                const on = !linked || linked.edges.has(e.index);
+                return (
+                  <g key={e.index} className={cn('transition-opacity duration-300', on ? 'opacity-100' : 'opacity-15')}>
+                    <path
+                      d={e.d}
+                      className={linked?.edges.has(e.index) ? 'stroke-signal-ink' : 'stroke-fg-faint'}
+                      strokeWidth={1.1}
+                      strokeDasharray="5 4"
+                      fill="none"
+                      markerEnd="url(#sys-arrow)"
+                      style={reduced ? undefined : { animation: 'dash-flow 1.1s linear infinite' }}
+                    />
+                    {!reduced && (
+                      <circle r={2.4} className="fill-signal">
+                        <animateMotion dur={`${1.8 + (e.index % 3) * 0.4}s`} repeatCount="indefinite" path={e.d} />
+                      </circle>
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+
+            {/* Edge labels sit above the boxes, placed clear of them (see diagram-layout.ts). */}
+            {layout.edges.map((e) =>
+              e.label ? (
                 <div
+                  key={e.index}
+                  aria-hidden
                   className={cn(
-                    'absolute inset-0 bg-black/40 blur-md transition-opacity duration-700 dark:bg-black/70',
-                    is3d ? 'opacity-60' : 'opacity-0'
-                  )}
-                />
-                <button
-                  type="button"
-                  onMouseEnter={() => onHover(n.id)}
-                  onMouseLeave={() => onHover(null)}
-                  onFocus={() => onHover(n.id)}
-                  onBlur={() => onHover(null)}
-                  className={cn(
-                    'absolute inset-0 flex flex-col justify-center overflow-hidden border bg-surface pr-2 pl-4 text-left transition-[transform,opacity,border-color] duration-500',
-                    on ? 'opacity-100' : 'opacity-30',
-                    lifted ? 'border-signal-ink' : 'border-border'
+                    'pointer-events-none absolute flex flex-col items-center justify-center rounded-[3px] border bg-bg text-center font-mono whitespace-nowrap transition-[opacity,border-color,color] duration-300',
+                    !linked || linked.edges.has(e.index) ? 'opacity-100' : 'opacity-15',
+                    linked?.edges.has(e.index) ? 'border-signal-ink/60 text-fg' : 'border-line text-fg-muted'
                   )}
                   style={{
-                    transform: is3d ? `translateZ(${lifted ? 46 : 26}px)` : lifted ? 'translateY(-2px)' : undefined,
+                    ...place(e.label.box),
+                    fontSize: u(FONT.edge),
+                    lineHeight: 1.25,
+                    transform: is3d ? 'translateZ(28px)' : undefined,
                   }}
                 >
-                  <span className="absolute inset-y-0 left-0 w-[3px]" style={{ background: n.color }} />
-                  <span className="truncate text-[12.5px] font-medium text-fg">{n.label}</span>
-                  <span className="truncate font-mono text-[10.5px] text-fg-faint">{n.tech}</span>
-                </button>
-              </div>
-            );
-          })}
+                  {e.label.lines.map((l) => (
+                    <span key={l}>{l}</span>
+                  ))}
+                </div>
+              ) : null
+            )}
+
+            {layout.nodes.map((n) => {
+              const on = !linked || linked.nodes.has(n.id);
+              const lifted = hovered === n.id;
+              return (
+                <div key={n.id} className="absolute [transform-style:preserve-3d]" style={place(n.box)}>
+                  {/* shadow on the board, visible when lifted in 3D */}
+                  <div
+                    className={cn(
+                      'absolute inset-0 bg-black/40 blur-md transition-opacity duration-700 dark:bg-black/70',
+                      is3d ? 'opacity-60' : 'opacity-0'
+                    )}
+                  />
+                  <button
+                    type="button"
+                    onMouseEnter={() => onHover(n.id)}
+                    onMouseLeave={() => onHover(null)}
+                    onFocus={() => onHover(n.id)}
+                    onBlur={() => onHover(null)}
+                    // Touch has no hover: a tap toggles the trace instead.
+                    onPointerUp={(ev) => ev.pointerType !== 'mouse' && onHover(lifted ? null : n.id)}
+                    className={cn(
+                      'absolute inset-0 flex flex-col justify-center overflow-hidden border bg-surface text-left transition-[transform,opacity,border-color] duration-500',
+                      on ? 'opacity-100' : 'opacity-30',
+                      lifted ? 'border-signal-ink' : 'border-border'
+                    )}
+                    style={{
+                      paddingLeft: u(8),
+                      paddingRight: u(4),
+                      transform: is3d ? `translateZ(${lifted ? 46 : 26}px)` : lifted ? 'translateY(-2px)' : undefined,
+                    }}
+                  >
+                    <span className="absolute inset-y-0 left-0 w-[3px]" style={{ background: n.color }} />
+                    <span className="truncate font-medium text-fg" style={{ fontSize: u(FONT.label), lineHeight: 1.3 }}>
+                      {n.label}
+                    </span>
+                    <span className="truncate font-mono text-fg-faint" style={{ fontSize: u(FONT.tech), lineHeight: 1.35 }}>
+                      {n.tech}
+                    </span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
@@ -184,10 +176,13 @@ function Board({
 }
 
 export function SystemsContent({ architectures }: { architectures: SystemArchitectureData[] }) {
-  const [selected, setSelected] = useState(0);
   const [hovered, setHovered] = useState<string | null>(null);
   const [mode, setMode] = useState<'2d' | '3d'>('3d');
 
+  // The selected diagram lives in the URL (/systems#flex-dca), so it can be linked to.
+  const hash = useLocationHash();
+  const fromHash = architectures.findIndex((a) => a.architectureId === hash);
+  const selected = fromHash === -1 ? 0 : fromHash;
   const arch = architectures[selected];
 
   const breakdown = useMemo(() => {
@@ -217,8 +212,8 @@ export function SystemsContent({ architectures }: { architectures: SystemArchite
             <li key={a.id} className="shrink-0">
               <button
                 onClick={() => {
-                  setSelected(i);
                   setHovered(null);
+                  replaceLocationHash(a.architectureId);
                 }}
                 aria-current={i === selected}
                 className={cn(
@@ -234,7 +229,12 @@ export function SystemsContent({ architectures }: { architectures: SystemArchite
         </ol>
       </nav>
 
-      <div className="min-w-0">
+      <div className="relative min-w-0">
+        {/* Scroll targets for /systems#<id> links. */}
+        {architectures.map((a) => (
+          <span key={a.id} id={a.architectureId} aria-hidden className="absolute top-0 scroll-mt-24" />
+        ))}
+
         <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
           <div>
             <h2 className="text-2xl font-medium tracking-[-0.02em] text-fg">{arch.title}</h2>
@@ -259,7 +259,7 @@ export function SystemsContent({ architectures }: { architectures: SystemArchite
 
         <Board arch={arch} mode={mode} hovered={hovered} onHover={setHovered} />
 
-        <p className="label-mono text-fg-faint">Hover a component to trace its connections</p>
+        <p className="label-mono text-fg-faint">Hover or tap a component to trace its connections</p>
 
         <table className="mt-10 w-full text-sm">
           <thead>

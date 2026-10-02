@@ -11,9 +11,8 @@
  * If you need to re-seed, restore those files or hardcode the data here.
  */
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import 'dotenv/config';
+import { prisma } from '../src/lib/prisma';
 
 async function main() {
   const projectCount = await prisma.project.count();

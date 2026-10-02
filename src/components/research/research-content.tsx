@@ -1,39 +1,8 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
+import { patent, researchInterests as interests } from '@/lib/content';
 
-const results = [
-  { value: '~1.6', unit: 'm', label: 'Mean localization accuracy' },
-  { value: '0.978', unit: '', label: 'R² score' },
-  { value: '<100', unit: 'ms', label: 'Inference latency' },
-  { value: '50+', unit: '', label: 'Concurrent devices' },
-];
-
-const hardware = ['ESP32 BLE', 'Raspberry Pi', 'MQTT', 'Edge Computing', 'FastAPI'];
-
-const futureScope = [
-  'UWB (Ultra-Wideband) integration for sub-meter accuracy',
-  'Federated learning across building deployments',
-  'AR navigation overlay for real-time wayfinding',
-  'Cloud-edge hybrid architecture for dynamic model updates',
-];
-
-const interests = [
-  {
-    title: 'RAG systems & NLP',
-    description:
-      'Retrieval-augmented generation pipelines, semantic search architectures, and context-grounded language model inference for domain-specific applications.',
-  },
-  {
-    title: 'Quantitative finance modeling',
-    description:
-      'Options pricing with ensemble models (Black-Scholes, Heston), volatility forecasting with GARCH, and algorithmic trading signal generation.',
-  },
-  {
-    title: 'Ensemble learning methods',
-    description:
-      'Dynamic stacking, model selection strategies, and meta-learning approaches for improving prediction robustness across heterogeneous data distributions.',
-  },
-];
+const { results, hardware, futureScope } = patent;
 
 function Section({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
   return (
@@ -54,17 +23,16 @@ export function ResearchContent() {
         <header className="border-b border-line bg-blueprint p-6 sm:p-10">
           <p className="label-mono flex items-center gap-2 text-signal-ink">
             <span className="size-1.5 bg-signal" />
-            Patent filed
+            {patent.status}
           </p>
           <h2 className="mt-6 max-w-4xl text-[clamp(1.6rem,3.4vw,2.6rem)] leading-[1.1] font-medium tracking-[-0.03em] text-fg text-balance">
-            A system and method for coordinated indoor position determination using
-            multi-stage signal processing
+            {patent.title}
           </h2>
           <dl className="mt-8 grid gap-px bg-line sm:grid-cols-3">
             {[
-              ['Application no.', '202541115892'],
-              ['Institution', 'VIT, Vellore, India'],
-              ['Period', 'Dec 2024 – Dec 2025'],
+              ['Application no.', patent.applicationNo],
+              ['Institution', patent.institution],
+              ['Period', patent.period],
             ].map(([k, v]) => (
               <div key={k} className="bg-bg px-4 py-3">
                 <dt className="label-mono text-fg-faint">{k}</dt>
@@ -76,24 +44,11 @@ export function ResearchContent() {
 
         <div className="px-6 sm:px-10">
           <Section n="01" title="Research problem">
-            <p>
-              GPS signals fail in indoor environments due to severe attenuation by walls,
-              ceilings, and structural materials. Existing indoor positioning solutions suffer
-              from high infrastructure costs, poor accuracy beyond 3–5 meters, and lack of
-              adaptability when deployed in new building layouts. There is no generalizable,
-              cost-effective system that achieves sub-2-meter accuracy across diverse indoor
-              environments.
-            </p>
+            <p>{patent.problem}</p>
           </Section>
 
           <Section n="02" title="Methodology">
-            <p>
-              A multi-stage signal processing pipeline using RSSI and BLE signals from ESP32
-              beacons, processed through a FastAPI + MQTT backend, with a dynamic stacking ML
-              ensemble for position estimation. Raw signal data is collected at edge gateways
-              (Raspberry Pi), filtered and feature-engineered, then fed into a meta-learner that
-              combines multiple base estimators to produce a final position prediction.
-            </p>
+            <p>{patent.methodology}</p>
           </Section>
 
           <section className="border-t border-line py-10">
@@ -115,25 +70,11 @@ export function ResearchContent() {
           </section>
 
           <Section n="04" title="Technical innovation">
-            <p>
-              A dynamic stacking ensemble built with Scikit-learn and XGBoost that adapts to
-              different environments without requiring full retraining. The meta-learner
-              automatically selects and weights base models based on local signal
-              characteristics. Complemented by an A* graph-based navigation system that
-              generates optimal paths in previously unseen building layouts using only
-              positioning data and a floor plan graph.
-            </p>
+            <p>{patent.innovation}</p>
           </Section>
 
           <Section n="05" title="Hardware integration">
-            <p>
-              ESP32 BLE beacons broadcast calibrated advertising packets at configurable
-              intervals. Raspberry Pi edge gateways aggregate and pre-process signals before
-              publishing to an MQTT broker, enabling lightweight, low-latency message delivery.
-              The edge computing architecture keeps inference close to the data source,
-              minimizing round-trip latency and enabling real-time position updates even in
-              network-constrained environments.
-            </p>
+            <p>{patent.hardwareIntegration}</p>
             <ul className="mt-5 flex flex-wrap gap-1.5">
               {hardware.map((t) => (
                 <li key={t} className="rounded-[3px] border border-line px-2 py-1 font-mono text-[11.5px]">

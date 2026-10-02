@@ -1,11 +1,12 @@
 'use server';
 
 import { randomBytes } from 'node:crypto';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
+import { KNOWLEDGE_TAG } from '@/lib/assistant/knowledge';
 import { serializeProject } from '@/lib/projects';
 import { SLUG_PATTERN } from '@/lib/markdown';
 import { PROJECT_SECTIONS, type ProjectSectionKey } from '@/lib/project-sections';
@@ -152,6 +153,7 @@ function revalidatePublic(...slugs: (string | undefined)[]) {
   for (const slug of new Set(slugs.filter(Boolean))) revalidatePath(`/work/${slug}`);
   revalidatePath('/sitemap.xml');
   revalidatePath('/api/search');
+  updateTag(KNOWLEDGE_TAG);
 }
 
 function failure(e: unknown, action: string): { ok: false; error: string; field?: keyof ProjectInput } {

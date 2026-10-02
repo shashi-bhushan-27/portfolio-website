@@ -7,7 +7,10 @@ A premium, high-performance software engineering portfolio for Shashi Bhushan Vi
 - **Framework**: Next.js 16.2 (App Router) using Turbopack for compilation.
 - **Rendering**: Static Site Generation (SSG) via `generateStaticParams` for blazing-fast edge delivery. Dynamic API routes for the contact form and AI assistant.
 - **Styling**: Tailwind CSS v4 paired with Framer Motion for sophisticated, scroll-triggered micro-animations.
-- **Database**: Neon Serverless PostgreSQL, managed via Prisma ORM v5. Hydrates static pages at build time.
+- **Database**: Neon Serverless PostgreSQL via Prisma ORM 7 and the Neon serverless driver adapter
+  (`src/lib/prisma.ts`). The connection URL for the CLI lives in `prisma.config.ts`, not the schema.
+  Hydrates static pages at build time.
+- **Runtime**: Node.js 24 (`engines` in package.json; AI SDK 7 needs Node 22+).
 - **State/Interactive**: Client components heavily utilized for interactive UI elements (`motion.div`, `useChat`).
 
 ## 3. Database Schema
@@ -42,13 +45,14 @@ A premium, high-performance software engineering portfolio for Shashi Bhushan Vi
 ## 6. Completed Integrations (Phase 5)
 - **Cloudinary**: Assets are served via a global CDN.
 - **Resend**: Transactional emails routed from the Contact form.
-- **Groq AI**: Personal embedded assistant powered by `llama-3.1-8b-instant`.
+- **Site assistant (Gemini)**: "Ask AI" widget answering only from the site's own content, with links to the
+  exact pages it used. AI SDK 7 + `@ai-sdk/google`; see "Site assistant" in `blog-system-context.md`.
 - **Google Analytics 4**: Pageview tracking via `@next/third-parties/google`.
 
 ## 7. Remaining Tasks / Next Steps
 - **Custom Domain Integration**: Purchasing a domain, mapping it to Vercel, and verifying it in Resend.
 - **Google Search Console**: Submitting the sitemap for indexing.
-- **Content Expansion**: Articles, case studies and videos are managed in the admin at `/admin`, `/admin/work` and `/admin/videos` (see `blog-system-context.md`); milestones and system diagrams via Prisma Studio.
+- **Content Expansion**: Articles, case studies, videos and résumés are managed in the admin at `/admin`, `/admin/work`, `/admin/videos` and `/admin/resumes` (see `blog-system-context.md`); milestones and system diagrams via Prisma Studio.
 
 ## 8. Technical Debt
 - **Image Optimization**: Currently relying on standard Next.js `<Image>`. As the portfolio grows, integrating `next-cloudinary` could yield better auto-cropping and format selection.
@@ -56,6 +60,6 @@ A premium, high-performance software engineering portfolio for Shashi Bhushan Vi
 
 ## 9. Next Maintainer Instructions
 - Run `npm run dev` for local development.
-- Manage articles at `/admin`, case studies at `/admin/work` and videos at `/admin/videos`. Run `npx prisma studio` for milestones and system diagrams.
+- Manage articles at `/admin`, case studies at `/admin/work`, videos at `/admin/videos` and résumés at `/admin/resumes`. Run `npx prisma studio` for milestones and system diagrams.
 - Do NOT rewrite the styling to standard CSS or CSS modules; strictly adhere to Tailwind v4.
 - Preserve the existing `.env` structure. Ensure the Neon pooled connection string is used in production.
