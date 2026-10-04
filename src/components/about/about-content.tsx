@@ -57,13 +57,13 @@ export function AboutContent() {
       <div className="lg:col-span-8">
         <div className="space-y-6 pb-12">
           <p className="text-[clamp(1.25rem,2.2vw,1.6rem)] leading-snug tracking-[-0.015em] text-fg text-pretty">
-            I&apos;m Shashi Bhushan Vijay, a software engineer who designs and builds
-            intelligent systems — machine learning pipelines, distributed architectures,
-            indoor localization, and AI-powered applications.
+            I&apos;m Shashi Bhushan Vijay, an AI engineer who designs and builds
+            intelligent systems — LLM and RAG applications, document intelligence, machine
+            learning pipelines, and the backends that serve them.
           </p>
           <p className="max-w-[62ch] leading-relaxed text-fg-muted">
             I have a published patent in signal processing for indoor positioning and have built
-            production-grade platforms across fintech, IoT, and developer tools. My approach is
+            production-grade platforms across fintech, HR tech, trade documents, and IoT. My approach is
             rooted in understanding the problem deeply before writing code: the best systems
             come from clear thinking about architecture, trade-offs, and the people using them.
           </p>

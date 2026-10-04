@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui/section-header";
 export const revalidate = 60;
 
 const description =
-  "Engineering case studies and production systems — from patent-backed ML localization and AI-powered fintech platforms to quantitative finance and blockchain applications.";
+  "Engineering case studies and production systems — from LLM and document-intelligence platforms to ML localization with a published patent and full-stack products.";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -22,7 +22,7 @@ export default async function WorkPage() {
       <PageHeader
         path="work"
         title="Engineering work"
-        description="Case studies from patent-backed ML systems and AI platforms to quantitative finance and blockchain applications."
+        description="Case studies from LLM and AI platforms to ML systems with a published patent and full-stack products."
         meta={`${projects.length} case studies`}
       />
       <WorkPageContent projects={projects} />

@@ -39,16 +39,6 @@ export const topics: { title: string; status: TopicStatus; description: string }
     status: 'Exploring',
     description: 'Low-latency systems, caching strategies, and performance optimization.',
   },
-  {
-    title: 'Quantitative Finance',
-    status: 'Paused',
-    description: 'Options pricing models, algorithmic trading, and risk management systems.',
-  },
-  {
-    title: 'Blockchain & Web3',
-    status: 'Paused',
-    description: 'Smart contract patterns, DeFi protocols, and decentralized architectures.',
-  },
 ];
 
 export const principles = [
@@ -72,23 +62,27 @@ export const principles = [
 ];
 
 export const expertiseAreas = [
-  'Software Engineering',
-  'Full Stack Development',
-  'AI/ML',
+  'AI Engineering',
+  'LLM Applications & RAG',
+  'Machine Learning',
   'System Design',
   'Distributed Systems',
-  'IoT',
-  'Blockchain',
+  'Full Stack Development',
+  'IoT & Edge',
   'Cloud Applications',
 ];
 
 export const skillGroups = [
-  { label: 'Languages', items: ['C++', 'Java', 'Python', 'JavaScript', 'SQL'] },
-  { label: 'Backend', items: ['FastAPI', 'REST APIs', 'Microservices', 'MQTT'] },
   {
-    label: 'ML & AI',
-    items: ['Scikit-learn', 'XGBoost', 'LSTM', 'SHAP', 'RAG', 'FAISS', 'LangChain', 'Groq'],
+    label: 'LLMs & RAG',
+    items: ['RAG', 'FAISS', 'SentenceTransformers', 'LangChain', 'Gemini', 'Groq', 'AI SDK'],
   },
+  {
+    label: 'Machine learning',
+    items: ['Scikit-learn', 'XGBoost', 'LSTM', 'SHAP', 'PaddleOCR'],
+  },
+  { label: 'Backend', items: ['FastAPI', 'REST APIs', 'Microservices', 'MQTT'] },
+  { label: 'Languages', items: ['Python', 'C++', 'Java', 'JavaScript', 'SQL'] },
   { label: 'Databases', items: ['PostgreSQL', 'SQLite'] },
   { label: 'Cloud & tools', items: ['AWS', 'Git', 'Streamlit'] },
 ];
@@ -138,11 +132,6 @@ export const researchInterests = [
     title: 'RAG systems & NLP',
     description:
       'Retrieval-augmented generation pipelines, semantic search architectures, and context-grounded language model inference for domain-specific applications.',
-  },
-  {
-    title: 'Quantitative finance modeling',
-    description:
-      'Options pricing with ensemble models (Black-Scholes, Heston), volatility forecasting with GARCH, and algorithmic trading signal generation.',
   },
   {
     title: 'Ensemble learning methods',

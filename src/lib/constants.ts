@@ -1,9 +1,9 @@
 export const siteConfig = {
   name: "Shashi Bhushan Vijay",
   shortName: "SBV",
-  title: "Shashi Bhushan Vijay — Software Engineer & System Designer",
+  title: "Shashi Bhushan Vijay — AI Engineer (LLM Systems, RAG, ML)",
   description:
-    "I design and engineer intelligent software systems spanning machine learning, distributed architectures, indoor localization, AI-powered applications, and modern web platforms.",
+    "I build AI systems that ship: LLM and RAG applications, machine-learning pipelines, and the backends and interfaces around them. Indoor-positioning research with a published patent, plus production work across fintech, document intelligence, and HR tech.",
   url: "https://shashibhushan.dev",
   ogImage: "/og/default.png",
   portrait:
@@ -21,15 +21,14 @@ export const siteConfig = {
   phone: "+91 7060049677",
   location: "Haridwar, India",
   timezone: "Asia/Kolkata",
-  role: "Software Engineer & System Designer",
+  role: "AI Engineer & System Designer",
   headline: "Building systems that understand, locate, and scale.",
   subheadline:
-    "I design and engineer intelligent software systems spanning machine learning, distributed architectures, indoor localization, AI-powered applications, and modern web platforms.",
+    "I build AI systems that ship: LLM and RAG applications, machine-learning pipelines, and the backends and interfaces around them. Indoor-positioning research with a published patent, plus production work across fintech, document intelligence, and HR tech.",
   tags: [
+    "AI Engineer",
+    "LLM Systems",
     "Patent Published",
-    "Software Engineer",
-    "AI/ML Engineer",
-    "Full Stack Developer",
     "System Designer",
   ],
   /** Headline numbers from the indoor-positioning patent work. */
@@ -41,7 +40,7 @@ export const siteConfig = {
   ],
   navigation: [
     { name: 'Work', href: '/work' },
-    { name: 'Systems', href: '/systems' },
+    { name: 'AI Systems', href: '/systems' },
     { name: 'Research', href: '/research' },
     { name: 'Insights', href: '/insights' },
     { name: 'Exploring', href: '/exploring' },

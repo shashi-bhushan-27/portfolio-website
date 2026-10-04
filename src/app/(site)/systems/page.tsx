@@ -7,9 +7,9 @@ import type { SystemArchitectureData } from '@/lib/types';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Systems',
+  title: 'AI Systems',
   description:
-    'Interactive system architecture explorer showcasing engineering designs across ML, IoT, blockchain, and full-stack systems.',
+    'Interactive system architecture explorer showcasing engineering designs across LLM and RAG pipelines, ML, IoT, and full-stack systems.',
 };
 
 export default async function SystemsPage() {
@@ -30,7 +30,7 @@ export default async function SystemsPage() {
     <>
       <PageHeader
         path="systems"
-        title="System architectures"
+        title="AI system architectures"
         description="How the production systems are put together — components, protocols, and the data that flows between them."
         meta={`${serialized.length} diagrams`}
       />

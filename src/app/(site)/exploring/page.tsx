@@ -3,7 +3,7 @@ import { ExploringContent } from '@/components/exploring/exploring-content';
 import { PageHeader } from '@/components/ui/section-header';
 
 const description =
-  "A public engineering journal of topics I'm actively researching — from advanced system design and AI agents to MLOps and quantitative finance.";
+  "A public engineering journal of topics I'm actively researching — from advanced system design and AI agents to LLM applications and MLOps.";
 
 export const metadata: Metadata = {
   title: 'Exploring',
