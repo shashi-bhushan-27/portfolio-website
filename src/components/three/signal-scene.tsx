@@ -496,8 +496,14 @@ export function SignalScene({
 }) {
   const glow = useMemo(() => glowTexture(), []);
   const world = useRef<THREE.Group>(null);
+  // One fog for the scene's lifetime: Rig fits its near/far to the camera distance, and
+  // re-creating it on a theme change would reset that range and fog out the whole plan.
+  const fog = useMemo(() => new THREE.Fog(palette.bg, 26, 48), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => () => glow.dispose(), [glow]);
+  useEffect(() => {
+    fog.color.set(palette.bg);
+  }, [fog, palette.bg]);
 
   useFrame(({ clock }) => {
     if (world.current && animate) {
@@ -507,7 +513,7 @@ export function SignalScene({
 
   return (
     <>
-      <fog attach="fog" args={[palette.bg, 26, 48]} />
+      <primitive attach="fog" object={fog} />
       <Rig pointer={pointer} animate={animate} shift={shift} />
       <group ref={world} rotation-y={-0.06}>
         <Building palette={palette} />

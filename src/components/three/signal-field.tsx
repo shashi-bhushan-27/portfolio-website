@@ -61,6 +61,7 @@ export default function SignalField({ className }: { className?: string }) {
   const desktop = useMediaQuery('(min-width: 1024px)');
   const host = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
+  const [ready, setReady] = useState(false);
   const telemetry = useMemo<Telemetry>(() => ({ x: 0, z: 0, beacons: 0, heading: 0 }), []);
   const pointer = useRef({ x: 0, y: 0 });
 
@@ -87,7 +88,11 @@ export default function SignalField({ className }: { className?: string }) {
   return (
     <div ref={host} className={cn('relative', className)}>
       <Canvas
-        className="!absolute inset-0"
+        className={cn(
+          '!absolute inset-0 transition-opacity duration-700 ease-out',
+          ready ? 'opacity-100' : 'opacity-0'
+        )}
+        onCreated={() => requestAnimationFrame(() => setReady(true))}
         dpr={[1, 1.75]}
         camera={{ fov: 34, near: 0.1, far: 120, position: [0, 17, 15.5] }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
