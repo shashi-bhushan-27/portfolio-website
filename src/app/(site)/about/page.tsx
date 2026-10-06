@@ -5,11 +5,11 @@ import { PageHeader } from '@/components/ui/section-header';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Software engineer specializing in machine learning, distributed systems, indoor localization, and AI-powered applications. Published patent in signal processing for indoor positioning.',
+    'AI engineer building LLM and RAG applications, machine-learning pipelines, and distributed systems. Published patent in signal processing for indoor positioning.',
   openGraph: {
     title: 'About — Shashi Bhushan Vijay',
     description:
-      'Software engineer specializing in machine learning, distributed systems, indoor localization, and AI-powered applications.',
+      'AI engineer building LLM and RAG applications, machine-learning pipelines, and distributed systems.',
     url: 'https://shashibhushan.dev/about',
   },
 };

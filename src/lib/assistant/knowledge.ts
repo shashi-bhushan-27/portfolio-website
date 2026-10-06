@@ -69,7 +69,7 @@ function profileDoc(): KnowledgeDoc {
       `Name: ${siteConfig.name}. Role: ${siteConfig.role}. Location: ${siteConfig.location}.`,
       `Headline: ${siteConfig.headline} ${siteConfig.subheadline}`,
       `Profile tags: ${siteConfig.tags.join(', ')}.`,
-      `In his words (from /about): I design and build intelligent systems — machine learning pipelines, distributed architectures, indoor localization, and AI-powered applications. I have a published patent in signal processing for indoor positioning and have built production-grade platforms across fintech, IoT, and developer tools. My approach is rooted in understanding the problem deeply before writing code.`,
+      `In his words (from /about): I'm an AI engineer who designs and builds intelligent systems — LLM and RAG applications, document intelligence, machine learning pipelines, and the backends that serve them. I have a published patent in signal processing for indoor positioning and have built production-grade platforms across fintech, HR tech, trade documents, and IoT. My approach is rooted in understanding the problem deeply before writing code.`,
       `Education: ${education.degree}, ${education.school} (${education.expected}).`,
       `Principles: ${principles.map((p) => `${p.title} — ${p.description}`).join(' | ')}`,
       `Areas: ${expertiseAreas.join(', ')}.`,

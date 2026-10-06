@@ -101,13 +101,15 @@ export function Now() {
 
         <div className="md:col-span-8 lg:col-span-5">
           <p className="text-xl leading-relaxed tracking-[-0.01em] text-fg text-pretty sm:text-[22px]">
-            I build intelligent systems end-to-end — from ESP32 beacons and edge gateways to
-            ML ensembles, RAG pipelines, and the product surface on top.
+            I build AI systems end-to-end — LLM and RAG applications, document intelligence, and
+            ML pipelines, with the APIs and product surface that put them in front of people.
           </p>
           <p className="mt-5 leading-relaxed text-fg-muted">
-            I have a published patent in signal processing for indoor positioning and have shipped
-            platforms across fintech, IoT, and developer tools. I care about understanding the
-            problem before writing code, and about systems that hold up in production.
+            My ML grounding comes from a published patent on indoor positioning, where I took a
+            model from ESP32 beacons and edge gateways to a real-time service. Since then I have
+            shipped AI platforms across fintech, HR tech, and trade documents. I care about
+            understanding the problem before writing code, and about systems that hold up in
+            production.
           </p>
         </div>
 

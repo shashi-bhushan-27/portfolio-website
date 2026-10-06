@@ -38,9 +38,9 @@ export function Hero() {
             className="fade-in mt-7 max-w-md text-[17px] leading-relaxed text-fg-muted text-pretty"
             style={delay(450)}
           >
-            I design and engineer intelligent software — machine learning, distributed
-            architectures, indoor localization, and the web platforms that put them in
-            front of people.
+            I build AI systems that ship — LLM and RAG applications, machine-learning
+            pipelines, and the backends and interfaces around them. My indoor-positioning
+            work (published patent) reaches ~1.6 m accuracy in under 100 ms.
           </p>
 
           <div className="fade-in mt-9 flex flex-wrap items-center gap-3" style={delay(600)}>
